@@ -3,7 +3,15 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  firebase: {
+    apiKey: "AIzaSyDAArrHxS2d42WOM8eaAFuIS1omECGNVyk",
+    authDomain: "uniqode-musical-mega-battle.firebaseapp.com",
+    databaseURL: "https://uniqode-musical-mega-battle.firebaseio.com",
+    projectId: "uniqode-musical-mega-battle",
+    storageBucket: "uniqode-musical-mega-battle.appspot.com",
+    messagingSenderId: "595453705010"
+  }
 };
 
 /*
