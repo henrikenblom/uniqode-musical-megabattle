@@ -9,11 +9,13 @@ import { AngularFireAuthModule } from "@angular/fire/auth";
 import { AngularFirestoreModule } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { MusicQuizComponent } from './components/music-quiz/music-quiz.component';
+import { SignInComponent } from './components/sign-in/sign-in.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    MusicQuizComponent
+    MusicQuizComponent,
+    SignInComponent
   ],
   imports: [
     AngularFireModule.initializeApp(environment.firebase),
