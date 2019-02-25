@@ -61,3 +61,6 @@ typings/
 .next
 /.idea/
 /uniqode-musical-megabattle.iml
+.DS_Store
+src/.DS_Store
+src/environments/
