@@ -1,9 +1,9 @@
-import { Injectable, NgZone } from '@angular/core';
-import { User } from "./user";
-import { auth } from 'firebase/app';
-import { AngularFireAuth } from "@angular/fire/auth";
-import { AngularFirestore, AngularFirestoreDocument } from '@angular/fire/firestore';
-import { Router } from "@angular/router";
+import {Injectable, NgZone} from '@angular/core';
+import {User} from "./user";
+import {auth} from 'firebase/app';
+import {AngularFireAuth} from "@angular/fire/auth";
+import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -42,11 +42,16 @@ export class AuthService {
   AuthLogin(provider) {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((result) => {
-        this.ngZone.run(() => {
-          this.router.navigate(['music-quiz']);
-        })
-        this.SetUserData(result.user);
-      }).catch((error) => {
+          if (result.user.email.endsWith('@uniqode.se')) {
+            this.ngZone.run(() => {
+              this.router.navigate(['music-quiz']);
+            });
+            this.SetUserData(result.user);
+          } else {
+            this.SignOut();
+          }
+        }
+      ).catch((error) => {
         window.alert(error)
       })
   }
@@ -68,7 +73,9 @@ export class AuthService {
   SignOut() {
     return this.afAuth.auth.signOut().then(() => {
       localStorage.removeItem('user');
-      this.router.navigate(['sign-in']);
+      this.ngZone.run(() => {
+        this.router.navigate(['sign-in']);
+      })
     })
   }
 
