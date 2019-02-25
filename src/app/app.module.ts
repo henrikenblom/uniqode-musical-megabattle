@@ -10,6 +10,7 @@ import {AngularFirestoreModule} from '@angular/fire/firestore';
 import {environment} from '../environments/environment';
 import {MusicQuizComponent} from './components/music-quiz/music-quiz.component';
 import {SignInComponent} from './components/sign-in/sign-in.component';
+import {AuthService} from "./services/auth.service";
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import {SignInComponent} from './components/sign-in/sign-in.component';
     BrowserModule,
     AppRoutingModule
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
