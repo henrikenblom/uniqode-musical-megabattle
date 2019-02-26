@@ -1,4 +1,4 @@
-<div class="container" fxLayout="column" fxLayoutAlign="center">
+<div *ngIf="preLogin" class="container" fxLayout="column" fxLayoutAlign="center" [@simpleFadeAnimation]="'in'">
   <div fxFlex="30%" class="logo-container">
     <img class="logo" src="assets/logo.png">
   </div>
