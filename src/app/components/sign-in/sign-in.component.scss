@@ -1,0 +1,13 @@
+.container > div {
+  display: flex;
+}
+
+.logo, .tagline {
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+  margin: 16px;
+}
+
+.tagline-container {
+  align-items: flex-end;
+}

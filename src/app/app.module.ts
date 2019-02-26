@@ -11,6 +11,7 @@ import {environment} from '../environments/environment';
 import {MusicQuizComponent} from './components/music-quiz/music-quiz.component';
 import {SignInComponent} from './components/sign-in/sign-in.component';
 import {AuthService} from "./services/auth.service";
+import {FlexLayoutModule} from "@angular/flex-layout";
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import {AuthService} from "./services/auth.service";
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireAuthModule,
     AngularFirestoreModule,
+    FlexLayoutModule,
     BrowserModule,
     AppRoutingModule
   ],
