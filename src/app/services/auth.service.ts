@@ -35,20 +35,20 @@ export class AuthService {
     return (user !== null);
   }
 
-  GoogleAuth() {
-    return this.AuthLogin(new auth.GoogleAuthProvider());
+  googleAuth() {
+    return this.authLogin(new auth.GoogleAuthProvider());
   }
 
-  AuthLogin(provider) {
+  authLogin(provider) {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((result) => {
           if (result.user.email.endsWith('@uniqode.se')) {
             this.ngZone.run(() => {
               this.router.navigate(['music-quiz']);
             });
-            this.SetUserData(result.user);
+            this.setUserData(result.user);
           } else {
-            this.SignOut();
+            this.signOut();
           }
         }
       ).catch((error) => {
@@ -56,7 +56,7 @@ export class AuthService {
       })
   }
 
-  SetUserData(user) {
+  setUserData(user) {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
     const userData: User = {
       uid: user.uid,
@@ -69,8 +69,7 @@ export class AuthService {
     })
   }
 
-  // Sign out
-  SignOut() {
+  signOut() {
     return this.afAuth.auth.signOut().then(() => {
       localStorage.removeItem('user');
       this.ngZone.run(() => {
