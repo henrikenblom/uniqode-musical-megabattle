@@ -1,4 +1,13 @@
+@import '~@angular/material/theming';
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+@import url('https://fonts.googleapis.com/css?family=Pragati+Narrow');
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
+
+$general-typography: mat-typography-config(
+  $font-family: 'Pragati Narrow'
+);
+
+@include mat-core($general-typography);
 
 html, body {
   margin: 0;
@@ -7,9 +16,20 @@ html, body {
   background-image: url("assets/background.png");
   background-size: cover;
   background-position: center;
+  font-family: 'Pragati Narrow', sans-serif;
+  font-size: 14px;
 }
 
-.container {
-  min-height: 100%;
-  width: 100%;
+.user-photo {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.image-button {
+  padding-left: 2px !important;
+}
+
+.mat-toolbar {
+  background-color: rgba(245,245,245,0.8);
 }

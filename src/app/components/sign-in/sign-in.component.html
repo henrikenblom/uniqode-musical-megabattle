@@ -1,10 +1,12 @@
-<div *ngIf="preLogin" class="container" fxLayout="column" fxLayoutAlign="center" [@simpleFadeAnimation]="'in'">
-  <div fxFlex="30%" class="logo-container">
-    <img class="logo" src="assets/logo.png">
-  </div>
-  <div class="bumper">
-  </div>
-  <div fxFlex="25%" class="tagline-container">
-    <img class="tagline" src="assets/tagline.png">
-  </div>
+<div class="logo-container">
+  <img class="logo" src="assets/logo.png">
+</div>
+<div class="tagline-container">
+  <img class="tagline" src="assets/tagline.png" *ngIf="preLogin" [@simpleFadeAnimation]="'in'">
+</div>
+<div *ngIf="!preLogin" class="sign-in-button-container" [@simpleFadeAnimation]="'in'">
+  <button class="sign-in-button" mat-raised-button color="primary" (click)="authService.googleAuth()">
+    <img src="assets/g-logo.png">
+    Sign in with Google
+  </button>
 </div>

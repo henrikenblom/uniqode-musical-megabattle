@@ -12,6 +12,7 @@ import {MusicQuizComponent} from './components/music-quiz/music-quiz.component';
 import {SignInComponent} from './components/sign-in/sign-in.component';
 import {AuthService} from "./services/auth.service";
 import {FlexLayoutModule} from "@angular/flex-layout";
+import {MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule} from "@angular/material";
 
 @NgModule({
   declarations: [
@@ -26,7 +27,11 @@ import {FlexLayoutModule} from "@angular/flex-layout";
     AngularFirestoreModule,
     FlexLayoutModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    MatButtonModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatMenuModule
   ],
   providers: [AuthService],
   bootstrap: [AppComponent]
