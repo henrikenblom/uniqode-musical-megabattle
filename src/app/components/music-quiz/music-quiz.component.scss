@@ -3,3 +3,26 @@
   padding-right: 16px;
   font-weight: bold;
 }
+
+.multiple-artist-annotation {
+  opacity: 0.6;
+  display: inline;
+}
+
+.music-quiz-question-card, .quiz-answer-card {
+  margin: 12px;
+}
+
+.music-quiz-question-card {
+  background-color: rgba(9, 28, 170, 0.8);
+  color: #ffffff;
+}
+
+.quiz-answer-card {
+  background-color: rgba(211, 9, 211, 0.9);
+  color: #ffffff;
+}
+
+.header-image {
+  opacity: 0.7;
+}

@@ -12,6 +12,7 @@ import {ApplicationState, GuessState, PlayerStats, ResponseOption, Track} from "
 export class MusicQuizComponent implements OnInit {
 
   REWARD_ADJUSTMENT_SCALE = 0.2303;
+  MAX_RANDOM_IMAGE_INDEX = 16;
   currentTrack: Track;
   currentArtistInformation: ArtistInformation;
   playerStats: PlayerStats;
@@ -21,6 +22,7 @@ export class MusicQuizComponent implements OnInit {
   guessState: GuessState = {guessWasCorrect: false, haveGuessed: false, reward: 0};
   stateSynced = false;
   guessable = true;
+  randomImageIndex = 1;
 
   constructor(
     private db: AngularFirestore,
@@ -131,6 +133,7 @@ export class MusicQuizComponent implements OnInit {
             || this.currentTrack.artist_id !== track.artist_id);
         this.currentTrack = track;
         this.quizRunning = this.currentTrack.is_playing;
+        this.randomImageIndex = this.randomizeIndex(this.MAX_RANDOM_IMAGE_INDEX);
         if (update) {
           this.guessable = true;
           this.guessState.haveGuessed = false;
@@ -146,7 +149,7 @@ export class MusicQuizComponent implements OnInit {
       .doc<ArtistInformation>(this.currentTrack.artist_id)
       .valueChanges()
       .forEach(artistInformation => {
-        if (artistInformation !== null) {
+        if (artistInformation) {
           this.responseOptions = [];
           this.currentArtistInformation = artistInformation;
           this.responseOptions[0] = {response: artistInformation.name, correct: true};
@@ -171,6 +174,10 @@ export class MusicQuizComponent implements OnInit {
       array[randomIndex] = temporaryValue;
     }
     return array;
+  }
+
+  private randomizeIndex(maxIndex: number) {
+    return Math.floor(Math.random() * (maxIndex - 1 + 1)) + 1;
   }
 
 }

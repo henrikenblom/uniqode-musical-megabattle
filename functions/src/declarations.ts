@@ -4,6 +4,7 @@ export interface Track {
   artist_id: string;
   is_playing: boolean;
   reward: number;
+  artist_count: number;
   song_start?: Date;
 }
 

@@ -1,10 +1,10 @@
 @import '~@angular/material/theming';
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
-@import url('https://fonts.googleapis.com/css?family=Pragati+Narrow');
+@import url('https://fonts.googleapis.com/css?family=Acme');
 @import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 
 $general-typography: mat-typography-config(
-  $font-family: 'Pragati Narrow'
+  $font-family: 'Acme'
 );
 
 @include mat-core($general-typography);
@@ -16,8 +16,19 @@ html, body {
   background-image: url("assets/background.png");
   background-size: cover;
   background-position: center;
-  font-family: 'Pragati Narrow', sans-serif;
+  font-family: 'Acme', sans-serif;
   font-size: 14px;
+}
+
+.logo-container {
+  position: absolute;
+  top: 40px;
+}
+
+.logo, .tagline {
+  width: calc(100% - 32px);
+  height: calc(100% - 32px);
+  margin: 16px;
 }
 
 .user-photo {
@@ -31,5 +42,10 @@ html, body {
 }
 
 .mat-toolbar {
-  background-color: rgba(245,245,245,0.8);
+  background-color: rgba(211, 9, 211, 0.8);
+}
+
+.toolbar-banner {
+  width: 70%;
+  margin-left: 24px;
 }

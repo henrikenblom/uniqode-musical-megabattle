@@ -12,13 +12,15 @@ import {MusicQuizComponent} from './components/music-quiz/music-quiz.component';
 import {SignInComponent} from './components/sign-in/sign-in.component';
 import {AuthService} from "./services/auth.service";
 import {FlexLayoutModule} from "@angular/flex-layout";
-import {MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule} from "@angular/material";
+import {MatButtonModule, MatCardModule, MatIconModule, MatMenuModule, MatToolbarModule} from "@angular/material";
+import { BackgroundImageDirective } from './background-image.directive';
 
 @NgModule({
   declarations: [
     AppComponent,
     MusicQuizComponent,
-    SignInComponent
+    SignInComponent,
+    BackgroundImageDirective
   ],
   imports: [
     BrowserAnimationsModule,
@@ -31,7 +33,8 @@ import {MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule} from "@
     MatButtonModule,
     MatToolbarModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    MatCardModule
   ],
   providers: [AuthService, {provide: FirestoreSettingsToken, useValue: {}}],
   bootstrap: [AppComponent]
