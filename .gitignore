@@ -64,3 +64,8 @@ typings/
 .DS_Store
 src/.DS_Store
 src/environments/
+/.firebase/
+.firebase/
+.firebaserc
+dist/
+src/app/components/sign-in/assets/

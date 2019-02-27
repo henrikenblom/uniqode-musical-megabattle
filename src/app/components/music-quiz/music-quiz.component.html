@@ -1,7 +1,11 @@
-<mat-toolbar *ngIf="authService.userData as user">
-  <button mat-icon-button [matMenuTriggerFor]="userMenu" class="image-button"><img class="user-photo" src="{{user.photoURL}}"></button>
-  <mat-menu #userMenu="matMenu">
-    <p class="user-name">{{user.displayName}}</p>
-    <button mat-menu-item (click)="authService.signOut()">Sign out</button>
-  </mat-menu>
-</mat-toolbar>
+<div *ngIf="authService.userData as user">
+  <mat-toolbar>
+    <button mat-icon-button [matMenuTriggerFor]="userMenu" class="image-button"><img class="user-photo"
+                                                                                     src="{{user.photoURL}}"></button>
+    <mat-menu #userMenu="matMenu">
+      <p class="user-name">{{user.displayName}}</p>
+      <button mat-menu-item (click)="authService.signOut()">Sign out</button>
+    </mat-menu>
+  </mat-toolbar>
+
+</div>

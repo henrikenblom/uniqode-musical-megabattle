@@ -10,7 +10,7 @@ import {Router} from "@angular/router";
 })
 
 export class AuthService {
-  userData: any;
+  userData: User;
 
   constructor(
     public afs: AngularFirestore,
@@ -27,6 +27,7 @@ export class AuthService {
         localStorage.setItem('user', null);
         JSON.parse(localStorage.getItem('user'));
       }
+      console.log(this.userData)
     })
   }
 
