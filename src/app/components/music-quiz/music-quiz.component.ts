@@ -82,7 +82,7 @@ export class MusicQuizComponent implements OnInit {
     statsReference.ref.get()
       .then(doc => {
         if (!doc.exists) {
-          docReference.set({points: 0, responses: 0, tens: 0});
+          statsReference.set({points: 0, responses: 0, tens: 0});
         }
       }).then(() => this.fetchPlayerStats());
 

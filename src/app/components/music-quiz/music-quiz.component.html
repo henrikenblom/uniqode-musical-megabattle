@@ -31,17 +31,16 @@
               <ng-template #easyGuess>
                 The songs is <span class="name">{{currentTrack.name}}</span>
                 <div class="reward-text">For <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span>
-                  points: Who is the artist/group?
+                  point<span *ngIf="currentTrack.reward > adjustReward(currentTrack.reward)">s</span>: Who is the artist/group?
                 </div>
               </ng-template>
             </ng-template>
             <ng-template #unguessableBlock>
-              <p>Det här är <span class="name">{{currentTrack.name}}</span> med <span
+              <p>This is <span class="name">{{currentTrack.name}}</span> with <span
                 class="name">{{currentTrack.artist_name}}</span>.
               </p>
-              <p>Tyvärr gav inte Spotify tillräckligt med information om artisten för att ge rimliga
-                svarsalternativ.</p>
-              <p>Nästa låt kommer säkert funka bättre. Så keep your pants on shawty!</p>
+              <p>Unfortunately Spotify didn't provide enough information about the artist to produce reasonable response alternatives.</p>
+              <p>Next song will probably work better. So keep your pants on shawty!</p>
             </ng-template>
           </mat-card-content>
         </mat-card>
@@ -60,7 +59,7 @@
             <mat-icon aria-hidden="true">pause</mat-icon>
           </h1>
           <img class="decoration-image" mat-card-image src="../../assets/music-quiz/pause.jpg">
-          Tävlingen är för tillfället pausad.
+          The quiz is paused at the moment.
         </div>
       </ng-template>
 
@@ -73,22 +72,22 @@
         <ng-container
           *ngIf="guessState.guessWasCorrect; then guessWasCorrectBlock else guessWasIncorrectBlock"></ng-container>
         <ng-template #guessWasCorrectBlock>
-          <h3>Rätt!</h3>
+          <h3>Correctemundo!</h3>
           <div class="decoration-image" mat-card-image appBackgroundImage
                [artistImage]="currentArtistInformation.images[0]"></div>
-          <span class="name">{{currentTrack.artist_name}}</span> med <span
+          <span class="name">{{currentTrack.artist_name}}</span> with <span
           class="name">{{currentTrack.name}}</span>
         </ng-template>
         <ng-template #guessWasIncorrectBlock>
-          <h3>Det var tyvärr fel…</h3>
+          <h3>That's not it at all…</h3>
           <div class="decoration-image" mat-card-image appBackgroundImage
                [artistImage]="currentArtistInformation.images[0]"></div>
-          Rätt svar är <span class="name">{{currentTrack.artist_name}}</span> (med <span
+          The correct answer is <span class="name">{{currentTrack.artist_name}}</span> (with <span
           class="name">{{currentTrack.name}}</span>)
         </ng-template>
       </div>
       <div *ngIf="playerStats" class="music-quiz-stats-card">
-        Du har totalt: <span class="points">{{playerStats.points}} poäng</span>
+        Your total score is: <span class="points">{{playerStats.points}} point<span *ngIf="playerStats.points > 1">s</span></span>
       </div>
     </ng-template>
   </ng-container>
