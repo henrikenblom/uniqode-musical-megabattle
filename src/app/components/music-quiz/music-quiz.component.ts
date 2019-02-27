@@ -27,15 +27,16 @@ export class MusicQuizComponent implements OnInit {
     public authService: AuthService,
     public router: Router,
     public ngZone: NgZone
-  ) {
-    console.log(authService.userData)
-  }
+  ) {}
 
   ngOnInit() {
-    // TODO userData seems to be fetched after init (fix that)
-    this.initializeState();
-    this.fetchGeneralState();
-    this.fetchCurrentTrack();
+    this.authService.afAuth.authState.subscribe(user => {
+      if (user) {
+        this.initializeState();
+        this.fetchGeneralState();
+        this.fetchCurrentTrack();
+      }
+    });
   }
 
   guess(responseOption: ResponseOption) {

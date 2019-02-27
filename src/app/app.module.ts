@@ -6,7 +6,7 @@ import {AppComponent} from './app.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {AngularFireModule} from "@angular/fire";
 import {AngularFireAuthModule} from "@angular/fire/auth";
-import {AngularFirestoreModule} from '@angular/fire/firestore';
+import {AngularFirestoreModule, FirestoreSettingsToken} from '@angular/fire/firestore';
 import {environment} from '../environments/environment';
 import {MusicQuizComponent} from './components/music-quiz/music-quiz.component';
 import {SignInComponent} from './components/sign-in/sign-in.component';
@@ -33,7 +33,7 @@ import {MatButtonModule, MatIconModule, MatMenuModule, MatToolbarModule} from "@
     MatIconModule,
     MatMenuModule
   ],
-  providers: [AuthService],
+  providers: [AuthService, {provide: FirestoreSettingsToken, useValue: {}}],
   bootstrap: [AppComponent]
 })
 export class AppModule {
