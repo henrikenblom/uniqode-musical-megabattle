@@ -19,7 +19,7 @@ export class MusicQuizComponent implements OnInit {
   responseOptions: ResponseOption[];
   generalStateQuizRunning = false;
   quizRunning = false;
-  guessState: GuessState = {guessWasCorrect: false, haveGuessed: false, reward: 0};
+  guessState: GuessState = {guessWasCorrect: false, haveGuessed: false, reward: 0, artist_genres: []};
   stateSynced = false;
   guessable = true;
   randomImageIndex = 1;
@@ -29,7 +29,8 @@ export class MusicQuizComponent implements OnInit {
     public authService: AuthService,
     public router: Router,
     public ngZone: NgZone
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.authService.afAuth.authState.subscribe(user => {
@@ -45,7 +46,8 @@ export class MusicQuizComponent implements OnInit {
     this.guessState = {
       guessWasCorrect: responseOption.correct,
       haveGuessed: true,
-      reward: this.adjustReward(this.currentTrack.reward)
+      reward: this.adjustReward(this.currentTrack.reward),
+      artist_genres: this.currentArtistInformation.genres
     };
     this.responseOptions = [];
     this.db.collection('musicquiz')
@@ -82,7 +84,31 @@ export class MusicQuizComponent implements OnInit {
     statsReference.ref.get()
       .then(doc => {
         if (!doc.exists) {
-          statsReference.set({points: 0, responses: 0, tens: 0});
+          statsReference.set({
+            disco_likes: 0,
+            disco_points: 0,
+            edm_likes: 0,
+            edm_points: 0,
+            indie_likes: 0,
+            indie_points: 0,
+            points: 0,
+            pop_likes: 0,
+            pop_points: 0,
+            punk_likes: 0,
+            punk_points: 0,
+            rap_likes: 0,
+            rap_points: 0,
+            reggae_likes: 0,
+            reggae_points: 0,
+            responses: 0,
+            rnb_likes: 0,
+            rnb_points: 0,
+            rock_likes: 0,
+            rock_points: 0,
+            soul_likes: 0,
+            soul_points: 0,
+            tens: 0,
+          });
         }
       }).then(() => this.fetchPlayerStats());
 

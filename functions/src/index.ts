@@ -52,14 +52,38 @@ exports.musizQuizHandleGuess = functions.firestore
 
     if (guessState.guessWasCorrect) {
 
-      let playerStats: PlayerStats = musicQuizAddReward({points: 0, responses: 0, tens: 0}, guessState.reward);
+      let playerStats: PlayerStats = musicQuizIncreaseStats({
+        disco_likes: 0,
+        disco_points: 0,
+        edm_likes: 0,
+        edm_points: 0,
+        indie_likes: 0,
+        indie_points: 0,
+        points: 0,
+        pop_likes: 0,
+        pop_points: 0,
+        punk_likes: 0,
+        punk_points: 0,
+        rap_likes: 0,
+        rap_points: 0,
+        reggae_likes: 0,
+        reggae_points: 0,
+        responses: 0,
+        rnb_likes: 0,
+        rnb_points: 0,
+        rock_likes: 0,
+        rock_points: 0,
+        soul_likes: 0,
+        soul_points: 0,
+        tens: 0,
+      }, guessState.reward, guessState.artist_genres);
       const statsRef = db.collection('musicquiz').doc('scoreboard').collection('stats').doc(userId);
       reward = guessState.reward;
 
       statsRef.get()
         .then(doc => {
           if (doc.exists) {
-            playerStats = musicQuizAddReward(<PlayerStats>doc.data(), guessState.reward);
+            playerStats = musicQuizIncreaseStats(<PlayerStats>doc.data(), guessState.reward, guessState.artist_genres);
             statsRef.update(playerStats).catch(e => {
               console.error(e);
             });
@@ -90,11 +114,22 @@ exports.musizQuizHandleGuess = functions.firestore
 
   });
 
-function musicQuizAddReward(playerStats: PlayerStats, reward: number): PlayerStats {
+function musicQuizIncreaseStats(playerStats: PlayerStats, reward: number, genres: String[]): PlayerStats {
   playerStats.points += reward;
   playerStats.responses++;
   if (reward === 10) {
     playerStats.tens++;
   }
+  const genreString = genres.join(' ');
+  if (genreString.includes('pop')) playerStats.pop_points++;
+  if (genreString.includes('rock')) playerStats.rock_points++;
+  if (genreString.includes('edm')) playerStats.edm_points++;
+  if (genreString.includes('punk')) playerStats.punk_points++;
+  if (genreString.includes('reggae')) playerStats.reggae_points++;
+  if (genreString.includes('rap')) playerStats.rap_points++;
+  if (genreString.includes('disco')) playerStats.disco_points++;
+  if (genreString.includes('rnb')) playerStats.rnb_points++;
+  if (genreString.includes('indie')) playerStats.indie_points++;
+  if (genreString.includes('soul')) playerStats.soul_points++;
   return playerStats;
 }
