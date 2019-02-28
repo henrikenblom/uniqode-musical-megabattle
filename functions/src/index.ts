@@ -8,13 +8,13 @@ try {
 
 const functions = require('firebase-functions');
 const db = admin.firestore();
-//TODO Both functions get Cannot read property 'data' of undefined
+
 exports.musicQuizResetGuesses = functions.firestore
   .document('musicquiz/current_track')
-  .onUpdate((event: { data: { data: () => Track; previous: { data: () => Track; }; }; }) => {
+  .onUpdate((change: { after: { data: () => Track; }; before: { data: () => Track; }; }) => {
 
-    const newTrack = event.data.data();
-    const previousTrack = event.data.previous.data();
+    const newTrack = change.after.data();
+    const previousTrack = change.before.data();
 
     if (newTrack.name !== previousTrack.name
       || newTrack.artist_id !== previousTrack.artist_id) {
@@ -36,17 +36,17 @@ exports.musicQuizResetGuesses = functions.firestore
         });
 
     } else {
-      return event;
+      return change;
     }
 
   });
 
 exports.musizQuizHandleGuess = functions.firestore
   .document('musicquiz/guesses/users/{userId}')
-  .onUpdate((event: { data: { data: () => GuessState; }; params: { userId: any; }; }) => {
+  .onUpdate((change: { after: { data: () => GuessState; }; }, context: { params: { userId: string; }; }) => {
 
-    const guessState = event.data.data();
-    const userId = event.params.userId;
+    const guessState = change.after.data();
+    const userId = context.params.userId;
     const historyRef = db.collection('musicquiz').doc('history').collection(userId);
     let reward = 0;
 
@@ -85,7 +85,7 @@ exports.musizQuizHandleGuess = functions.firestore
       };
       return historyRef.add(guess);
     } else {
-      return event;
+      return change;
     }
 
   });
