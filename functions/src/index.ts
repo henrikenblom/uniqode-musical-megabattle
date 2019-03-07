@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import {GuessState, MusicQuizGuess, PlayerStats, Track} from "./declarations";
+import {QuizState, MusicQuizGuess, PlayerStats, Track} from "./declarations";
 
 try {
   admin.initializeApp();
@@ -43,7 +43,7 @@ exports.musicQuizResetGuesses = functions.firestore
 
 exports.musizQuizHandleGuess = functions.firestore
   .document('musicquiz/guesses/users/{userId}')
-  .onUpdate((change: { after: { data: () => GuessState; }; }, context: { params: { userId: string; }; }) => {
+  .onUpdate((change: { after: { data: () => QuizState; }; }, context: { params: { userId: string; }; }) => {
 
     const guessState = change.after.data();
     const userId = context.params.userId;
@@ -76,14 +76,14 @@ exports.musizQuizHandleGuess = functions.firestore
         soul_likes: 0,
         soul_points: 0,
         tens: 0,
-      }, guessState.reward, guessState.artist_genres);
+      }, guessState.reward, guessState.artistGenres);
       const statsRef = db.collection('musicquiz').doc('scoreboard').collection('stats').doc(userId);
       reward = guessState.reward;
 
       statsRef.get()
         .then(doc => {
           if (doc.exists) {
-            playerStats = musicQuizIncreaseStats(<PlayerStats>doc.data(), guessState.reward, guessState.artist_genres);
+            playerStats = musicQuizIncreaseStats(<PlayerStats>doc.data(), guessState.reward, guessState.artistGenres);
             statsRef.update(playerStats).catch(e => {
               console.error(e);
             });
@@ -120,16 +120,18 @@ function musicQuizIncreaseStats(playerStats: PlayerStats, reward: number, genres
   if (reward === 10) {
     playerStats.tens++;
   }
-  const genreString = genres.join(' ');
-  if (genreString.includes('pop')) playerStats.pop_points++;
-  if (genreString.includes('rock')) playerStats.rock_points++;
-  if (genreString.includes('edm')) playerStats.edm_points++;
-  if (genreString.includes('punk')) playerStats.punk_points++;
-  if (genreString.includes('reggae')) playerStats.reggae_points++;
-  if (genreString.includes('rap')) playerStats.rap_points++;
-  if (genreString.includes('disco')) playerStats.disco_points++;
-  if (genreString.includes('rnb')) playerStats.rnb_points++;
-  if (genreString.includes('indie')) playerStats.indie_points++;
-  if (genreString.includes('soul')) playerStats.soul_points++;
+  if (genres) {
+    const genreString = genres.join(' ');
+    if (genreString.includes('pop')) playerStats.pop_points++;
+    if (genreString.includes('rock')) playerStats.rock_points++;
+    if (genreString.includes('edm')) playerStats.edm_points++;
+    if (genreString.includes('punk')) playerStats.punk_points++;
+    if (genreString.includes('reggae')) playerStats.reggae_points++;
+    if (genreString.includes('rap')) playerStats.rap_points++;
+    if (genreString.includes('disco')) playerStats.disco_points++;
+    if (genreString.includes('rnb')) playerStats.rnb_points++;
+    if (genreString.includes('indie')) playerStats.indie_points++;
+    if (genreString.includes('soul')) playerStats.soul_points++;
+  }
   return playerStats;
 }

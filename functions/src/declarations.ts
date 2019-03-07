@@ -5,7 +5,7 @@ export interface Track {
   is_playing: boolean;
   reward: number;
   artist_count: number;
-  song_start?: Date;
+  timestamp: number;
 }
 
 export interface PlayerStats {
@@ -40,11 +40,12 @@ export interface MusicQuizGuess {
   guessDate: Date;
 }
 
-export interface GuessState {
+export interface QuizState {
   haveGuessed: boolean;
   guessWasCorrect: boolean;
   reward: number;
-  artist_genres: String[];
+  artistGenres: String[];
+  haveLiked: boolean;
 }
 
 export interface ResponseOption {

@@ -2,6 +2,7 @@
   padding-left: 16px;
   padding-right: 16px;
   font-weight: bold;
+  opacity: 0.6;
 }
 
 .multiple-artist-annotation {
@@ -9,28 +10,62 @@
   display: inline;
 }
 
-.music-quiz-question-card, .quiz-answer-card {
+.music-quiz-question-card, .quiz-answer-card, .quiz-response, .track-feedback {
   margin: 12px;
 }
 
-.music-quiz-question-card {
-  background-color: rgba(9, 28, 170, 0.8);
-  color: #ffffff;
+.incorrect {
+  background-color: rgba(214, 31, 6, 0.9);
 }
 
-.quiz-answer-card {
+
+.music-quiz-question-card, .correct {
   background-color: rgba(211, 9, 211, 0.9);
   color: #ffffff;
 }
 
+.quiz-answer-card {
+  background-color: rgba(9, 28, 170, 0.9);
+  color: #ffffff;
+}
+
+.track-feedback {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
 .header-image {
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .name {
   font-weight: bold;
+  font-size: 1.15em;
 }
 
 .decoration-image {
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
 
+.quiz-response, .track-feedback {
+  text-align: center;
+}
+
+.track-feedback-label {
+  padding-top: 8px;
+}
+
+.total-score {
+  color: #ffffff;
+  margin-left: 24px;
+}
+
+@media only screen and (max-height: 568px) {
+  .decoration-image {
+    height: 160px;
+    width: 160px;
+  }
 }

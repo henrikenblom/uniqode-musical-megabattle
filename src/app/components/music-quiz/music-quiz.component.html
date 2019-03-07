@@ -1,16 +1,27 @@
+<!--suppress ALL -->
 <ng-container *ngIf="authService.userData as user">
   <mat-toolbar class="mat-elevation-z3">
     <button mat-icon-button [matMenuTriggerFor]="userMenu" class="image-button">
-      <img class="user-photo" src="{{user.photoURL}}"></button>
+      <img alt="User photo" class="user-photo" src="{{user.photoURL}}"></button>
     <mat-menu #userMenu="matMenu">
       <p class="user-name">{{user.displayName}}</p>
       <button mat-menu-item (click)="authService.signOut()">Sign out</button>
     </mat-menu>
+    <div *ngIf="playerStats" class="total-score">
+      Total score: <span counto
+                         [step]="10"
+                         [countTo]="playerStats.points"
+                         [countFrom]="previousScore"
+                         [duration]="1" (countoEnd)="onCountoEnd()"
+                         (countoChange)="intermediate = $event">
+      {{intermediate | round}}
+    </span>
+    </div>
   </mat-toolbar>
 
   <ng-container *ngIf="stateSynced">
 
-    <ng-container *ngIf="stateSynced && guessState.haveGuessed; then resultBlock else guessBlock"></ng-container>
+    <ng-container *ngIf="stateSynced && quizState.haveGuessed; then resultBlock else guessBlock"></ng-container>
 
     <ng-template #guessBlock>
 
@@ -18,8 +29,9 @@
         *ngIf="stateSynced && quizRunning && generalStateQuizRunning; then quizRunningBlock else quizPausedBlock"></ng-container>
 
       <ng-template #quizRunningBlock>
-        <mat-card *ngIf="responseOptions && responseOptions.length === 3" class="music-quiz-question-card mat-elevation-z2">
-          <img mat-card-image class="header-image" src="../../assets/music-quiz/header-images/{{randomImageIndex}}.jpg">
+        <mat-card *ngIf="responseOptions && responseOptions.length === 3"
+                  class="music-quiz-question-card mat-elevation-z2">
+          <img alt="Decorative image" mat-card-image class="header-image" src="../../assets/music-quiz/header-images/{{randomImageIndex}}.jpg">
           <mat-card-content>
             <ng-container *ngIf="guessable; then clueBlock else unguessableBlock"></ng-container>
             <ng-template #clueBlock>
@@ -31,7 +43,8 @@
               <ng-template #easyGuess>
                 The songs is <span class="name">{{currentTrack.name}}</span>
                 <div class="reward-text">For <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span>
-                  point<span *ngIf="currentTrack.reward > adjustReward(currentTrack.reward)">s</span>: Who is the artist/group?
+                  point<span *ngIf="currentTrack.reward > adjustReward(currentTrack.reward)">s</span>: Who is the
+                  artist/group?
                 </div>
               </ng-template>
             </ng-template>
@@ -39,13 +52,15 @@
               <p>This is <span class="name">{{currentTrack.name}}</span> with <span
                 class="name">{{currentTrack.artist_name}}</span>.
               </p>
-              <p>Unfortunately Spotify didn't provide enough information about the artist to produce reasonable response alternatives.</p>
+              <p>Unfortunately Spotify didn't provide enough information about the artist to produce reasonable response
+                alternatives.</p>
               <p>Next song will probably work better. So keep your pants on shawty!</p>
             </ng-template>
           </mat-card-content>
         </mat-card>
         <mat-card *ngFor="let responseOption of responseOptions" class="quiz-answer-card mat-elevation-z2" mat-ripple
-                  (click)="guess(responseOption)">
+                  (click)="guess(responseOption)"
+                  @fold-out>
           <mat-card-content>
             {{responseOption.response}}
             <div class="multiple-artist-annotation" *ngIf="currentTrack.artist_count > 1">(and others)</div>
@@ -58,7 +73,7 @@
           <h1>
             <mat-icon aria-hidden="true">pause</mat-icon>
           </h1>
-          <img class="decoration-image" mat-card-image src="../../assets/music-quiz/pause.jpg">
+          <img alt="Pause image" class="decoration-image" mat-card-image src="../../assets/music-quiz/pause.jpg">
           The quiz is paused at the moment.
         </div>
       </ng-template>
@@ -66,28 +81,50 @@
     </ng-template>
 
     <ng-template #resultBlock>
-      <div class="error-background" *ngIf="stateSynced && !guessState.guessWasCorrect"></div>
-      <div *ngIf="currentArtistInformation && currentTrack" class="quiz-response"
-           [ngClass]="{'wrong': !guessState.guessWasCorrect}">
-        <ng-container
-          *ngIf="guessState.guessWasCorrect; then guessWasCorrectBlock else guessWasIncorrectBlock"></ng-container>
-        <ng-template #guessWasCorrectBlock>
-          <h3>Correctemundo!</h3>
-          <div class="decoration-image" mat-card-image appBackgroundImage
-               [artistImage]="currentArtistInformation.images[0]"></div>
-          <span class="name">{{currentTrack.artist_name}}</span> with <span
-          class="name">{{currentTrack.name}}</span>
-        </ng-template>
-        <ng-template #guessWasIncorrectBlock>
-          <h3>That's not it at all…</h3>
-          <div class="decoration-image" mat-card-image appBackgroundImage
-               [artistImage]="currentArtistInformation.images[0]"></div>
-          The correct answer is <span class="name">{{currentTrack.artist_name}}</span> (with <span
-          class="name">{{currentTrack.name}}</span>)
-        </ng-template>
-      </div>
-      <div *ngIf="playerStats" class="music-quiz-stats-card">
-        Your total score is: <span class="points">{{playerStats.points}} point<span *ngIf="playerStats.points > 1">s</span></span>
+      <div [@.disabled]="!quizState.haveGuessed">
+        <mat-card *ngIf="currentArtistInformation && currentTrack" class="quiz-response"
+                  [ngClass]="{'incorrect': !quizState.guessWasCorrect, 'correct': quizState.guessWasCorrect}"
+                  @fold>
+          <ng-container
+            *ngIf="quizState.guessWasCorrect; then guessWasCorrectBlock else guessWasIncorrectBlock"></ng-container>
+
+          <ng-template #guessWasCorrectBlock>
+            <h1>Well done unicorn!</h1>
+            <div class="decoration-image" mat-card-image appBackgroundImage
+                 [artistImage]="currentArtistInformation.images[0]"></div>
+            <mat-card-content>
+              <span class="name">{{currentTrack.artist_name}}</span> with <span
+              class="name">{{currentTrack.name}}</span>
+            </mat-card-content>
+          </ng-template>
+
+          <ng-template #guessWasIncorrectBlock>
+            <h1>Not quite…</h1>
+            <div class="decoration-image" mat-card-image appBackgroundImage
+                 [artistImage]="currentArtistInformation.images[0]"></div>
+            <mat-card-content>
+              This is <span class="name">{{currentTrack.artist_name}}</span> (with <span
+              class="name">{{currentTrack.name}}</span>)
+            </mat-card-content>
+          </ng-template>
+
+        </mat-card>
+        <mat-card class="track-feedback" *ngIf="!quizState.haveLiked" [@delayed-fold]>
+          <mat-card-content>
+            <p class="track-feedback-label">How do you feel about this track?</p>
+            <mat-card-actions>
+              <button mat-flat-button color="accent">
+                <mat-icon aria-label="I like this track" (click)="likeTrack(true)">thumb_up</mat-icon>
+                Like
+              </button>
+              <span>&nbsp;</span>
+              <button mat-flat-button color="accent">
+                <mat-icon aria-label="I don't like this track" (click)="likeTrack(false)">thumb_down</mat-icon>
+                Dislike
+              </button>
+            </mat-card-actions>
+          </mat-card-content>
+        </mat-card>
       </div>
     </ng-template>
   </ng-container>

@@ -12,15 +12,24 @@ import {MusicQuizComponent} from './components/music-quiz/music-quiz.component';
 import {SignInComponent} from './components/sign-in/sign-in.component';
 import {AuthService} from "./services/auth.service";
 import {FlexLayoutModule} from "@angular/flex-layout";
-import {MatButtonModule, MatCardModule, MatIconModule, MatMenuModule, MatToolbarModule} from "@angular/material";
-import { BackgroundImageDirective } from './background-image.directive';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatIconModule,
+  MatMenuModule,
+  MatToolbarModule
+} from "@angular/material";
+import {BackgroundImageDirective} from './background-image.directive';
+import {CountoModule} from "angular2-counto";
+import { RoundPipe } from './round.pipe';
 
 @NgModule({
   declarations: [
     AppComponent,
     MusicQuizComponent,
     SignInComponent,
-    BackgroundImageDirective
+    BackgroundImageDirective,
+    RoundPipe
   ],
   imports: [
     BrowserAnimationsModule,
@@ -34,7 +43,8 @@ import { BackgroundImageDirective } from './background-image.directive';
     MatToolbarModule,
     MatIconModule,
     MatMenuModule,
-    MatCardModule
+    MatCardModule,
+    CountoModule
   ],
   providers: [AuthService, {provide: FirestoreSettingsToken, useValue: {}}],
   bootstrap: [AppComponent]

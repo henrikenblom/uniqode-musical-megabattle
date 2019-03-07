@@ -2,12 +2,36 @@ import {Component, OnInit, NgZone} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
 import {AngularFirestore} from "@angular/fire/firestore";
-import {ApplicationState, GuessState, PlayerStats, ResponseOption, Track} from "../../../../functions/src/declarations";
+import {ApplicationState, QuizState, PlayerStats, ResponseOption, Track} from "../../../../functions/src/declarations";
+import {animate, style, transition, trigger} from "@angular/animations";
 
 @Component({
   selector: 'app-music-quiz',
   templateUrl: './music-quiz.component.html',
-  styleUrls: ['./music-quiz.component.scss']
+  styleUrls: ['./music-quiz.component.scss'],
+  animations: [
+    trigger('delayed-fold', [
+      transition(':enter', [style({height: 0, opacity: 0, overflow: 'hidden'}),
+        animate('.3s 1.5s ease',
+          style({height: '*', opacity: '*'}))]),
+      transition(':leave', [style({height: '*', opacity: '*', overflow: 'hidden'}),
+        animate('.3s .2s ease',
+          style({height: 0, opacity: 0}))])
+    ]),
+    trigger('fold', [
+      transition(':enter', [style({height: 0, opacity: 0, overflow: 'hidden'}),
+        animate('.2s .2s ease',
+          style({height: '*', opacity: '*'}))]),
+      transition(':leave', [style({height: '*', opacity: '*', overflow: 'hidden'}),
+        animate('.2s ease',
+          style({height: 0, opacity: 0}))])
+    ]),
+    trigger('fold-out', [
+      transition(':enter', [style({height: 0, opacity: 0, overflow: 'hidden'}),
+        animate('.2s ease',
+          style({height: '*', opacity: '*'}))])
+    ])
+  ]
 })
 export class MusicQuizComponent implements OnInit {
 
@@ -19,10 +43,11 @@ export class MusicQuizComponent implements OnInit {
   responseOptions: ResponseOption[];
   generalStateQuizRunning = false;
   quizRunning = false;
-  guessState: GuessState = {guessWasCorrect: false, haveGuessed: false, reward: 0, artist_genres: []};
+  quizState: QuizState = {guessWasCorrect: false, haveGuessed: false, reward: 0, artistGenres: [], haveLiked: false};
   stateSynced = false;
   guessable = true;
   randomImageIndex = 1;
+  previousScore = 0;
 
   constructor(
     private db: AngularFirestore,
@@ -42,19 +67,57 @@ export class MusicQuizComponent implements OnInit {
     });
   }
 
+  onCountoEnd() {
+    this.previousScore = this.playerStats.points;
+  }
+
+  likeTrack(positive: boolean) {
+    if (!this.quizState.haveLiked) {
+      this.quizState.haveLiked = true;
+      const statsReference = this.db.collection('musicquiz')
+        .doc('scoreboard')
+        .collection('stats')
+        .doc(this.authService.userData.uid);
+      const term = positive ? 1 : -1;
+      statsReference.ref.get()
+        .then(doc => {
+          let playerStats = <PlayerStats>doc.data();
+          const genreString = this.currentArtistInformation.genres.join(' ');
+          if (genreString.includes('pop')) playerStats.pop_likes += term;
+          if (genreString.includes('rock')) playerStats.rock_likes += term;
+          if (genreString.includes('edm')) playerStats.edm_likes += term;
+          if (genreString.includes('punk')) playerStats.punk_likes += term;
+          if (genreString.includes('reggae')) playerStats.reggae_likes += term;
+          if (genreString.includes('rap')) playerStats.rap_likes += term;
+          if (genreString.includes('disco')) playerStats.disco_likes += term;
+          if (genreString.includes('rnb')) playerStats.rnb_likes += term;
+          if (genreString.includes('indie')) playerStats.indie_likes += term;
+          if (genreString.includes('soul')) playerStats.soul_likes += term;
+          statsReference.set(playerStats).then(() =>
+            this.persistState()
+          );
+        });
+    }
+  }
+
   guess(responseOption: ResponseOption) {
-    this.guessState = {
+    this.quizState = {
       guessWasCorrect: responseOption.correct,
       haveGuessed: true,
       reward: this.adjustReward(this.currentTrack.reward),
-      artist_genres: this.currentArtistInformation.genres
+      artistGenres: this.currentArtistInformation.genres,
+      haveLiked: false
     };
     this.responseOptions = [];
+    this.persistState();
+  }
+
+  private persistState() {
     this.db.collection('musicquiz')
       .doc('guesses')
       .collection('users')
       .doc(this.authService.userData.uid)
-      .set(this.guessState);
+      .set(this.quizState);
   }
 
   adjustReward(reward: number) {
@@ -62,7 +125,7 @@ export class MusicQuizComponent implements OnInit {
   }
 
   private initializeState() {
-    const docReference = this.db.collection('musicquiz')
+    const stateReference = this.db.collection('musicquiz')
       .doc('guesses')
       .collection('users')
       .doc(this.authService.userData.uid);
@@ -71,13 +134,12 @@ export class MusicQuizComponent implements OnInit {
       .collection('stats')
       .doc(this.authService.userData.uid);
 
-    docReference.ref.get()
+    stateReference.ref.get()
       .then(doc => {
-        this.guessState.haveGuessed = doc.exists;
         if (doc.exists) {
-          this.guessState.guessWasCorrect = doc.data()['correct'];
+          this.quizState = <QuizState>doc.data();
         } else {
-          docReference.set(this.guessState);
+          stateReference.set(this.quizState);
         }
       }).then(() => this.fetchState());
 
@@ -115,7 +177,7 @@ export class MusicQuizComponent implements OnInit {
   }
 
   private fetchPlayerStats() {
-    const statsReference = this.db.collection('musicquiz')
+    this.db.collection('musicquiz')
       .doc('scoreboard')
       .collection('stats')
       .doc<PlayerStats>(this.authService.userData.uid)
@@ -129,13 +191,10 @@ export class MusicQuizComponent implements OnInit {
     this.db.collection('musicquiz')
       .doc('guesses')
       .collection('users')
-      .doc<GuessState>(this.authService.userData.uid)
+      .doc<QuizState>(this.authService.userData.uid)
       .valueChanges()
-      .forEach(guessState => {
-        if (guessState !== null) {
-          this.guessState.haveGuessed = guessState.haveGuessed;
-          this.guessState.guessWasCorrect = guessState.guessWasCorrect;
-        }
+      .forEach(state => {
+        this.quizState = state;
         this.stateSynced = true;
       });
   }
@@ -159,10 +218,10 @@ export class MusicQuizComponent implements OnInit {
             || this.currentTrack.artist_id !== track.artist_id);
         this.currentTrack = track;
         this.quizRunning = this.currentTrack.is_playing;
-        this.randomImageIndex = this.randomizeIndex(this.MAX_RANDOM_IMAGE_INDEX);
+        this.randomImageIndex = MusicQuizComponent.randomizeIndex(this.MAX_RANDOM_IMAGE_INDEX);
         if (update) {
           this.guessable = true;
-          this.guessState.haveGuessed = false;
+          this.quizState.haveGuessed = false;
           this.fetchCurrentArtistInformation();
         }
       });
@@ -181,7 +240,7 @@ export class MusicQuizComponent implements OnInit {
           this.responseOptions[0] = {response: artistInformation.name, correct: true};
           this.responseOptions[1] = {response: artistInformation.related_artists[0], correct: false};
           this.responseOptions[2] = {response: artistInformation.related_artists[1], correct: false};
-          this.shuffleResponses(this.responseOptions);
+          MusicQuizComponent.shuffleResponses(this.responseOptions);
           this.guessable = true;
         } else {
           this.responseOptions = [];
@@ -190,7 +249,7 @@ export class MusicQuizComponent implements OnInit {
       });
   }
 
-  private shuffleResponses(array: ResponseOption[]): ResponseOption[] {
+  private static shuffleResponses(array: ResponseOption[]): ResponseOption[] {
     let currentIndex = array.length, temporaryValue, randomIndex;
     while (0 !== currentIndex) {
       randomIndex = Math.floor(Math.random() * currentIndex);
@@ -202,7 +261,7 @@ export class MusicQuizComponent implements OnInit {
     return array;
   }
 
-  private randomizeIndex(maxIndex: number) {
+  private static randomizeIndex(maxIndex: number) {
     return Math.floor(Math.random() * (maxIndex - 1 + 1)) + 1;
   }
 
