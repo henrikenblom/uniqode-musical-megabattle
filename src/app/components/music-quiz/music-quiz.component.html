@@ -38,24 +38,21 @@
             <ng-template #clueBlock>
               <ng-container *ngIf="currentTrack.reward > 4; then hardGuess else easyGuess"></ng-container>
               <ng-template #hardGuess>
-                For <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span> points: Which artist/group
-                made this song?
+                För <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span> poäng: Vilken artist/grupp har gjort låten
+                som spelas?
               </ng-template>
               <ng-template #easyGuess>
-                The songs is <span class="name">{{currentTrack.name}}</span>
-                <div class="reward-text">For <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span>
-                  point<span *ngIf="currentTrack.reward > adjustReward(currentTrack.reward)">s</span>: Who is the
-                  artist/group?
+                Låten heter <span class="name">{{currentTrack.name}}</span>
+                <div class="reward-text">För <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span> poäng: Vad heter
+                  artisten/gruppen?
                 </div>
               </ng-template>
             </ng-template>
             <ng-template #unguessableBlock>
-              <p>This is <span class="name">{{currentTrack.name}}</span> with <span
-                class="name">{{currentTrack.artist_name}}</span>.
+              <p>Det här är <span class="name">{{currentTrack.name}}</span> med <span class="name">{{currentTrack.artist_name}}</span>.
               </p>
-              <p>Unfortunately Spotify didn't provide enough information about the artist to produce reasonable response
-                alternatives.</p>
-              <p>Next song will probably work better. So keep your pants on shawty!</p>
+              <p>Tyvärr gav inte Spotify tillräckligt med information om artisten för att ge rimliga svarsalternativ.</p>
+              <p>Nästa låt kommer säkert funka bättre. Så keep your pants on shawty!</p>
             </ng-template>
           </mat-card-content>
         </mat-card>
@@ -64,7 +61,7 @@
                   @fold-out>
           <mat-card-content>
             {{responseOption.response}}
-            <div class="multiple-artist-annotation" *ngIf="currentTrack.artist_count > 1">(and others)</div>
+            <div class="multiple-artist-annotation" *ngIf="currentTrack.artist_count > 1">(med flera)</div>
           </mat-card-content>
         </mat-card>
       </ng-template>
@@ -73,7 +70,7 @@
         <mat-card class="music-quiz-paused" @fade-in>
           <mat-card-content>
             <img alt="Pause image" class="decoration-image" src="../../assets/music-quiz/pause.jpg">
-            <h2>The quiz is paused at the moment.</h2>
+            <h2>Tävlingen är för tillfället pausad.</h2>
           </mat-card-content>
         </mat-card>
       </ng-template>
@@ -89,21 +86,21 @@
             *ngIf="quizState.guessWasCorrect; then guessWasCorrectBlock else guessWasIncorrectBlock"></ng-container>
 
           <ng-template #guessWasCorrectBlock>
-            <h1>Well done unicorn!</h1>
+            <h1>Snyggt jobbat unicorn!</h1>
             <div class="decoration-image" mat-card-image appBackgroundImage
                  [artistImage]="currentArtistInformation.images[0]"></div>
             <mat-card-content>
-              <span class="name">{{currentTrack.artist_name}}</span> with <span
+              <span class="name">{{currentTrack.artist_name}}</span> med <span
               class="name">{{currentTrack.name}}</span>
             </mat-card-content>
           </ng-template>
 
           <ng-template #guessWasIncorrectBlock>
-            <h1>Not quite…</h1>
+            <h1>Inte riktigt…</h1>
             <div class="decoration-image" mat-card-image appBackgroundImage
                  [artistImage]="currentArtistInformation.images[0]"></div>
             <mat-card-content>
-              This is <span class="name">{{currentTrack.artist_name}}</span> (with <span
+              Det här är <span class="name">{{currentTrack.artist_name}}</span> (med <span
               class="name">{{currentTrack.name}}</span>)
             </mat-card-content>
           </ng-template>
@@ -111,16 +108,16 @@
         </mat-card>
         <mat-card class="track-feedback" *ngIf="!quizState.haveLiked" [@delayed-fold]>
           <mat-card-content>
-            <p class="track-feedback-label">How do you feel about this track?</p>
+            <h3 class="track-feedback-label">Vad tycker du om låten?</h3>
             <mat-card-actions>
               <button mat-flat-button color="accent">
-                <mat-icon aria-label="I like this track" (click)="likeTrack(true)">thumb_up</mat-icon>
-                Like
+                <mat-icon aria-label="Jag gillart" (click)="likeTrack(true)">thumb_up</mat-icon>
+                Bra skit!
               </button>
               <span>&nbsp;</span>
               <button mat-flat-button color="accent">
-                <mat-icon aria-label="I don't like this track" (click)="likeTrack(false)">thumb_down</mat-icon>
-                Dislike
+                <mat-icon aria-label="Fy fan" (click)="likeTrack(false)">thumb_down</mat-icon>
+                Det är skit!
               </button>
             </mat-card-actions>
           </mat-card-content>
