@@ -1,12 +1,12 @@
 <div class="logo-container">
-  <img class="logo" src="assets/logo.png">
+  <img alt="UniQode Musical Megabattle" class="logo" src="assets/logo.png">
 </div>
 <div class="tagline-container">
-  <img class="tagline" src="assets/tagline.png" *ngIf="preLogin" [@simpleFadeAnimation]="'in'">
+  <img alt="Crank up that knowledge" class="tagline" src="assets/tagline.png" *ngIf="preLogin" [@simpleFadeAnimation]="'in'">
 </div>
 <div *ngIf="!preLogin" class="sign-in-button-container" [@simpleFadeAnimation]="'in'">
   <button class="sign-in-button" mat-raised-button color="primary" (click)="authService.googleAuth()">
-    <img src="assets/g-logo.png">
-    Sign in with Google
+    <img alt="Sign in with Google" src="assets/g-logo.png">
+    Logga in med Google
   </button>
 </div>
