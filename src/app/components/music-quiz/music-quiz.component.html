@@ -31,7 +31,8 @@
       <ng-template #quizRunningBlock>
         <mat-card *ngIf="responseOptions && responseOptions.length === 3"
                   class="music-quiz-question-card mat-elevation-z2">
-          <img alt="Decorative image" mat-card-image class="header-image" src="../../assets/music-quiz/header-images/{{randomImageIndex}}.jpg">
+          <img alt="Decorative image" mat-card-image class="header-image"
+               src="../../assets/music-quiz/header-images/{{randomImageIndex}}.jpg">
           <mat-card-content>
             <ng-container *ngIf="guessable; then clueBlock else unguessableBlock"></ng-container>
             <ng-template #clueBlock>
@@ -69,13 +70,12 @@
       </ng-template>
 
       <ng-template #quizPausedBlock>
-        <div class="music-quiz-paused">
-          <h1>
-            <mat-icon aria-hidden="true">pause</mat-icon>
-          </h1>
-          <img alt="Pause image" class="decoration-image" mat-card-image src="../../assets/music-quiz/pause.jpg">
-          The quiz is paused at the moment.
-        </div>
+        <mat-card class="music-quiz-paused" @fade-in>
+          <mat-card-content>
+            <img alt="Pause image" class="decoration-image" src="../../assets/music-quiz/pause.jpg">
+            <h2>The quiz is paused at the moment.</h2>
+          </mat-card-content>
+        </mat-card>
       </ng-template>
 
     </ng-template>

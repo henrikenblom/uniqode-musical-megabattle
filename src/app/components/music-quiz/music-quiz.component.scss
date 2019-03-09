@@ -10,7 +10,7 @@
   display: inline;
 }
 
-.music-quiz-question-card, .quiz-answer-card, .quiz-response, .track-feedback {
+.music-quiz-question-card, .quiz-answer-card, .quiz-response, .track-feedback, .music-quiz-paused {
   margin: 12px;
 }
 
@@ -18,8 +18,7 @@
   background-color: rgba(214, 31, 6, 0.9);
 }
 
-
-.music-quiz-question-card, .correct {
+.music-quiz-question-card, .correct, .music-quiz-paused {
   background-color: rgba(211, 9, 211, 0.9);
   color: #ffffff;
 }
@@ -50,7 +49,7 @@
   margin-right: auto;
 }
 
-.quiz-response, .track-feedback {
+.quiz-response, .track-feedback, .music-quiz-paused {
   text-align: center;
 }
 
@@ -61,6 +60,16 @@
 .total-score {
   color: #ffffff;
   margin-left: 24px;
+}
+
+.music-quiz-paused {
+  img {
+    margin-bottom: 16px;
+    margin-top: 24px;
+  }
+  h2 {
+    margin-bottom: 8px;
+  }
 }
 
 @media only screen and (max-height: 568px) {
