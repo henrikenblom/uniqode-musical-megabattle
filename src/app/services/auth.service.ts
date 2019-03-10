@@ -4,19 +4,23 @@ import {auth} from 'firebase/app';
 import {AngularFireAuth} from "@angular/fire/auth";
 import {AngularFirestore, AngularFirestoreDocument} from '@angular/fire/firestore';
 import {Router} from "@angular/router";
+import {MatSnackBar} from "@angular/material";
+import {UseUniqodeAccountWarningComponent} from "../use-uniqode-account-warning/use-uniqode-account-warning.component";
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class AuthService {
+
   userData: User;
 
   constructor(
     public afs: AngularFirestore,
     public afAuth: AngularFireAuth,
     public router: Router,
-    public ngZone: NgZone
+    public ngZone: NgZone,
+    private snackBar: MatSnackBar
   ) {
     this.afAuth.authState.subscribe(user => {
       if (user) {
@@ -49,6 +53,7 @@ export class AuthService {
             this.setUserData(result.user);
           } else {
             this.signOut();
+            this.snackBar.openFromComponent(UseUniqodeAccountWarningComponent);
           }
         }
       ).catch((error) => {

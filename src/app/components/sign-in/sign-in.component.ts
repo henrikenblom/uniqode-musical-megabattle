@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {MatSnackBar} from "@angular/material";
 
 @Component({
   selector: 'app-sign-in',
@@ -23,13 +24,13 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 })
 export class SignInComponent implements OnInit {
 
-  preLogin = true;
+  preLogin = false;
 
   constructor(public authService: AuthService) {
   }
 
   ngOnInit() {
-    setInterval(() => {
+    setTimeout(() => {
       this.preLogin = false;
     }, 5000);
   }

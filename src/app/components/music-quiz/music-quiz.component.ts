@@ -15,7 +15,7 @@ import {animate, style, transition, trigger} from "@angular/animations";
         animate('.3s 1.5s ease',
           style({height: '*', opacity: '*'}))]),
       transition(':leave', [style({height: '*', opacity: '*', overflow: 'hidden'}),
-        animate('.3s .2s ease',
+        animate('.3s .5s ease',
           style({height: 0, opacity: 0}))])
     ]),
     trigger('fold', [
@@ -33,7 +33,7 @@ import {animate, style, transition, trigger} from "@angular/animations";
     ]),
     trigger('fade-in', [
       transition(':enter', [style({opacity: 0}),
-        animate('.4s .8s ease',
+        animate('.4s .5s ease',
           style({opacity: '*'}))])
     ])
   ]

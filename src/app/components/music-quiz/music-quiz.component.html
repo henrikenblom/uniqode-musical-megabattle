@@ -8,14 +8,20 @@
       <button mat-menu-item (click)="authService.signOut()">Sign out</button>
     </mat-menu>
     <div *ngIf="playerStats" class="total-score">
-      Total score: <span counto
-                         [step]="10"
-                         [countTo]="playerStats.points"
-                         [countFrom]="previousScore"
-                         [duration]="1" (countoEnd)="onCountoEnd()"
-                         (countoChange)="intermediate = $event">
+      Din poäng: <span counto
+                       [step]="10"
+                       [countTo]="playerStats.points"
+                       [countFrom]="previousScore"
+                       [duration]="1" (countoEnd)="onCountoEnd()"
+                       (countoChange)="intermediate = $event">
       {{intermediate | round}}
     </span>
+      <span class="on-fire"
+            *ngIf="quizState.reward == 10
+            && previousScore == playerStats.points
+            && quizState.guessWasCorrect" @fade-in>
+        🔥
+      </span>
     </div>
   </mat-toolbar>
 
@@ -38,20 +44,24 @@
             <ng-template #clueBlock>
               <ng-container *ngIf="currentTrack.reward > 4; then hardGuess else easyGuess"></ng-container>
               <ng-template #hardGuess>
-                För <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span> poäng: Vilken artist/grupp har gjort låten
+                För <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span> poäng: Vilken artist/grupp
+                har gjort låten
                 som spelas?
               </ng-template>
               <ng-template #easyGuess>
                 Låten heter <span class="name">{{currentTrack.name}}</span>
-                <div class="reward-text">För <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span> poäng: Vad heter
+                <div class="reward-text">För <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span>
+                  poäng: Vad heter
                   artisten/gruppen?
                 </div>
               </ng-template>
             </ng-template>
             <ng-template #unguessableBlock>
-              <p>Det här är <span class="name">{{currentTrack.name}}</span> med <span class="name">{{currentTrack.artist_name}}</span>.
+              <p>Det här är <span class="name">{{currentTrack.name}}</span> med <span
+                class="name">{{currentTrack.artist_name}}</span>.
               </p>
-              <p>Tyvärr gav inte Spotify tillräckligt med information om artisten för att ge rimliga svarsalternativ.</p>
+              <p>Tyvärr gav inte Spotify tillräckligt med information om artisten för att ge rimliga
+                svarsalternativ.</p>
               <p>Nästa låt kommer säkert funka bättre. Så keep your pants on shawty!</p>
             </ng-template>
           </mat-card-content>
@@ -106,18 +116,18 @@
           </ng-template>
 
         </mat-card>
-        <mat-card class="track-feedback" *ngIf="!quizState.haveLiked" [@delayed-fold]>
+        <mat-card class="track-feedback" *ngIf="!quizState.haveLiked" @delayed-fold>
           <mat-card-content>
             <h3 class="track-feedback-label">Vad tycker du om låten?</h3>
             <mat-card-actions>
-              <button mat-flat-button color="accent">
-                <mat-icon aria-label="Jag gillart" (click)="likeTrack(true)">thumb_up</mat-icon>
-                Bra skit!
+              <button mat-flat-button (click)="likeTrack(true)">
+                <mat-icon aria-label="Jag gillart">thumb_up</mat-icon>
+                <span>&nbsp;Bra skit!</span>
               </button>
               <span>&nbsp;</span>
-              <button mat-flat-button color="accent">
-                <mat-icon aria-label="Fy fan" (click)="likeTrack(false)">thumb_down</mat-icon>
-                Det är skit!
+              <button mat-flat-button (click)="likeTrack(false)">
+                <mat-icon aria-label="Fy fan">thumb_down</mat-icon>
+                <span>&nbsp;Det är skit!</span>
               </button>
             </mat-card-actions>
           </mat-card-content>

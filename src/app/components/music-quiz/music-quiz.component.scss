@@ -15,25 +15,40 @@
 }
 
 .incorrect {
-  background-color: rgba(214, 31, 6, 0.9);
+  background-color: rgba(214, 31, 6, 0.5);
+  color: rgb(54, 10, 3);
 }
 
 .music-quiz-question-card, .correct, .music-quiz-paused {
-  background-color: rgba(211, 9, 211, 0.9);
-  color: #ffffff;
+  background-color: rgba(211, 9, 211, 0.85);
+  color: rgb(255, 210, 255);
+}
+
+.music-quiz-question-card {
+  mat-card-content {
+    font-size: 1.2em;
+  }
 }
 
 .quiz-answer-card {
   background-color: rgba(9, 28, 170, 0.9);
-  color: #ffffff;
+  color: rgb(194, 213, 255);
+  height: 18px;
 }
 
 .track-feedback {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 160, 255, 0.75);
+  color: rgb(111, 0, 111);
+  button {
+    background-color: rgb(111, 0, 111);
+    color: rgb(255, 210, 255);
+  }
 }
 
 .header-image {
   opacity: 0.8;
+  max-height: 200px;
+  overflow: hidden;
 }
 
 .name {
@@ -58,8 +73,9 @@
 }
 
 .total-score {
-  color: #ffffff;
+  color: rgb(255, 210, 255);
   margin-left: 24px;
+  padding-top: 4px;
 }
 
 .music-quiz-paused {

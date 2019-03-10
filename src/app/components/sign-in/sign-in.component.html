@@ -4,9 +4,9 @@
 <div class="tagline-container">
   <img alt="Crank up that knowledge" class="tagline" src="assets/tagline.png" *ngIf="preLogin" @simpleFadeAnimation>
 </div>
-<div *ngIf="!preLogin" class="sign-in-button-container" [@simpleFadeAnimation]="'in'">
-  <button class="sign-in-button" mat-raised-button color="primary" (click)="authService.googleAuth()">
+<div *ngIf="!preLogin" class="sign-in-button-container" @simpleFadeAnimation>
+  <div class="sign-in-button mat-elevation-z2" mat-ripple (click)="authService.googleAuth()">
     <img alt="Sign in with Google" src="assets/g-logo.png">
-    Logga in med Google
-  </button>
+    <span>Logga in med Google</span>
+  </div>
 </div>

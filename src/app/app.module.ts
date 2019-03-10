@@ -13,15 +13,18 @@ import {SignInComponent} from './components/sign-in/sign-in.component';
 import {AuthService} from "./services/auth.service";
 import {FlexLayoutModule} from "@angular/flex-layout";
 import {
+  MAT_SNACK_BAR_DEFAULT_OPTIONS,
   MatButtonModule,
   MatCardModule,
   MatIconModule,
   MatMenuModule,
+  MatRippleModule, MatSnackBarModule,
   MatToolbarModule
 } from "@angular/material";
 import {BackgroundImageDirective} from './background-image.directive';
 import {CountoModule} from "angular2-counto";
-import { RoundPipe } from './round.pipe';
+import {RoundPipe} from './round.pipe';
+import {UseUniqodeAccountWarningComponent} from './use-uniqode-account-warning/use-uniqode-account-warning.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +32,8 @@ import { RoundPipe } from './round.pipe';
     MusicQuizComponent,
     SignInComponent,
     BackgroundImageDirective,
-    RoundPipe
+    RoundPipe,
+    UseUniqodeAccountWarningComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -44,9 +48,14 @@ import { RoundPipe } from './round.pipe';
     MatIconModule,
     MatMenuModule,
     MatCardModule,
+    MatRippleModule,
+    MatSnackBarModule,
     CountoModule
   ],
-  providers: [AuthService, {provide: FirestoreSettingsToken, useValue: {}}],
+  entryComponents: [UseUniqodeAccountWarningComponent],
+  providers: [AuthService,
+    {provide: FirestoreSettingsToken, useValue: {}},
+    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 4000}}],
   bootstrap: [AppComponent]
 })
 export class AppModule {
