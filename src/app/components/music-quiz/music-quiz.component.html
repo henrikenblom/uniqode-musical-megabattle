@@ -28,7 +28,7 @@
   <ng-container *ngIf="stateSynced">
 
     <ng-container *ngIf="stateSynced && quizState.haveGuessed; then resultBlock else guessBlock"></ng-container>
-    
+
     <ng-template #guessBlock>
 
       <ng-container
@@ -79,7 +79,7 @@
                   @fold-out>
           <mat-card-content>
             {{responseOption.response}}
-            <div class="multiple-artist-annotation" *ngIf="currentTrack.artist_count > 1">(med flera)</div>
+            <div class="multiple-artist-annotation" *ngIf="!customQuestion && currentTrack.artist_count > 1">(med flera)</div>
           </mat-card-content>
         </mat-card>
       </ng-template>
