@@ -9,6 +9,54 @@ try {
 const functions = require('firebase-functions');
 const db = admin.firestore();
 
+exports.resetMusicQuiz = functions.https.onRequest((req: any, res: any) => {
+
+  const scoreboardRef = db.collection('musicquiz').doc('scoreboard').collection('stats');
+  const guessesRef = db.collection('musicquiz').doc('guesses').collection('users');
+
+  const promise = scoreboardRef.get()
+    .then((snapshot) => {
+
+      const batch = db.batch();
+      snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      batch.commit().then(() => {
+        console.log('Scoreboard has been reset.')
+      }).catch(() => {
+        console.error('Scoreboard could not be reset.');
+      });
+
+    });
+
+  guessesRef.get()
+    .then((snapshot) => {
+
+      const batch = db.batch();
+      snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      batch.commit().then(() => {
+        console.log('Guesses has been reset.')
+      }).catch(() => {
+        console.error('Guesses could not be reset.');
+      });
+
+    }).then(() => {
+      console.log('Guesses snapshot could be fetched');
+    })
+    .catch(() => {
+      console.log('Guesses snapshot could not be fetched');
+    });
+
+  res.set({'Access-Control-Allow-Origin': '*'}).status(200).send('OK');
+
+  return promise;
+
+});
+
 exports.musicQuizResetGuesses = functions.firestore
   .document('musicquiz/current_track')
   .onUpdate((change: { after: { data: () => Track; }; before: { data: () => Track; }; }) => {
@@ -43,14 +91,15 @@ exports.musicQuizResetGuesses = functions.firestore
 
 exports.musizQuizHandleGuess = functions.firestore
   .document('musicquiz/guesses/users/{userId}')
-  .onUpdate((change: { after: { data: () => QuizState; }; }, context: { params: { userId: string; }; }) => {
+  .onUpdate((change: { after: { data: () => QuizState; }, before: { data: () => QuizState; } }, context: { params: { userId: string; }; }) => {
 
     const guessState = change.after.data();
     const userId = context.params.userId;
     const historyRef = db.collection('musicquiz').doc('history').collection(userId);
+    const statsRef = db.collection('musicquiz').doc('scoreboard').collection('stats').doc(userId);
     let reward = 0;
 
-    if (guessState.guessWasCorrect) {
+    if (!change.before.data().haveGuessed && guessState.guessWasCorrect) {
 
       let playerStats: PlayerStats = musicQuizIncreaseStats({
         disco_likes: 0,
@@ -77,7 +126,7 @@ exports.musizQuizHandleGuess = functions.firestore
         soul_points: 0,
         tens: 0,
       }, guessState.reward, guessState.artistGenres);
-      const statsRef = db.collection('musicquiz').doc('scoreboard').collection('stats').doc(userId);
+
       reward = guessState.reward;
 
       statsRef.get()
@@ -101,7 +150,7 @@ exports.musizQuizHandleGuess = functions.firestore
 
     guessState.reward = reward;
 
-    if (guessState.haveGuessed) {
+    if (!change.before.data().haveGuessed && guessState.haveGuessed) {
       const guess: MusicQuizGuess = {
         guessDate: new Date(),
         guessWasCorrect: guessState.guessWasCorrect,

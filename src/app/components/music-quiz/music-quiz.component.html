@@ -31,8 +31,8 @@
 
     <ng-template #guessBlock>
 
-      <ng-container
-        *ngIf="stateSynced && quizRunning && generalStateQuizRunning; then quizRunningBlock else quizPausedBlock"></ng-container>
+      <ng-container *ngIf="stateSynced && quizRunning && generalStateQuizRunning; then quizRunningBlock else quizPausedBlock">
+      </ng-container>
 
       <ng-template #quizRunningBlock>
         <mat-card *ngIf="responseOptions && responseOptions.length === 3"
@@ -116,7 +116,7 @@
           </ng-template>
 
         </mat-card>
-        <mat-card class="track-feedback" *ngIf="!quizState.haveLiked" @delayed-fold>
+        <mat-card class="track-feedback" *ngIf="!quizState.haveLiked && generalStateQuizRunning" @delayed-fold>
           <mat-card-content>
             <h3 class="track-feedback-label">Vad tycker du om låten?</h3>
             <mat-card-actions>

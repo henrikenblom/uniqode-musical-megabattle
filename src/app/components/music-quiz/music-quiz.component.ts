@@ -1,8 +1,7 @@
-import {Component, OnInit, NgZone} from '@angular/core';
-import {Router} from "@angular/router";
+import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {AngularFirestore} from "@angular/fire/firestore";
-import {ApplicationState, QuizState, PlayerStats, ResponseOption, Track} from "../../../../functions/src/declarations";
+import {ApplicationState, PlayerStats, QuizState, ResponseOption, Track} from "../../../../functions/src/declarations";
 import {animate, style, transition, trigger} from "@angular/animations";
 
 @Component({
@@ -56,9 +55,7 @@ export class MusicQuizComponent implements OnInit {
 
   constructor(
     private db: AngularFirestore,
-    public authService: AuthService,
-    public router: Router,
-    public ngZone: NgZone
+    public authService: AuthService
   ) {
   }
 

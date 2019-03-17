@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
-import {MatSnackBar} from "@angular/material";
 
 @Component({
   selector: 'app-sign-in',
