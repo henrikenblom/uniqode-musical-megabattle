@@ -6,6 +6,16 @@ export interface Track {
   reward: number;
   artist_count: number;
   timestamp: number;
+  duration: number;
+  track_id: string;
+}
+
+export interface CustomQuestion {
+  trackName: string;
+  artistName: string;
+  trackId: string;
+  text: string;
+  responseOptions: ResponseOption[];
 }
 
 export interface PlayerStats {

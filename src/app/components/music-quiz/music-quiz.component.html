@@ -28,10 +28,11 @@
   <ng-container *ngIf="stateSynced">
 
     <ng-container *ngIf="stateSynced && quizState.haveGuessed; then resultBlock else guessBlock"></ng-container>
-
+    
     <ng-template #guessBlock>
 
-      <ng-container *ngIf="stateSynced && quizRunning && generalStateQuizRunning; then quizRunningBlock else quizPausedBlock">
+      <ng-container
+        *ngIf="stateSynced && quizRunning && generalStateQuizRunning; then quizRunningBlock else quizPausedBlock">
       </ng-container>
 
       <ng-template #quizRunningBlock>
@@ -42,7 +43,14 @@
           <mat-card-content>
             <ng-container *ngIf="guessable; then clueBlock else unguessableBlock"></ng-container>
             <ng-template #clueBlock>
-              <ng-container *ngIf="currentTrack.reward > 4; then hardGuess else easyGuess"></ng-container>
+              <ng-container *ngIf="customQuestion">
+                {{customQuestion.text}}
+                <p class="custom-question-points">Rätt svar ger <span
+                  class="reward-point">{{adjustReward(currentTrack.reward)}}</span> poäng</p>
+              </ng-container>
+              <ng-container *ngIf="!customQuestion">
+                <ng-container *ngIf="currentTrack.reward > 4; then hardGuess else easyGuess"></ng-container>
+              </ng-container>
               <ng-template #hardGuess>
                 För <span class="reward-point">{{adjustReward(currentTrack.reward)}}</span> poäng: Vilken artist/grupp
                 har gjort låten
@@ -97,16 +105,19 @@
 
           <ng-template #guessWasCorrectBlock>
             <h1>Snyggt jobbat unicorn!</h1>
+            <p *ngIf="customQuestion">"{{customQuestionCorrectAnswer}}" är rätt!</p>
             <div class="decoration-image" mat-card-image appBackgroundImage
                  [artistImage]="currentArtistInformation.images[0]"></div>
             <mat-card-content>
-              <span class="name">{{currentTrack.artist_name}}</span> med <span
+              <span *ngIf="customQuestion">Och det här är </span><span class="name">{{currentTrack.artist_name}}</span>
+              med <span
               class="name">{{currentTrack.name}}</span>
             </mat-card-content>
           </ng-template>
 
           <ng-template #guessWasIncorrectBlock>
             <h1>Inte riktigt…</h1>
+            <p *ngIf="customQuestion">"{{customQuestionCorrectAnswer}}" var svaret</p>
             <div class="decoration-image" mat-card-image appBackgroundImage
                  [artistImage]="currentArtistInformation.images[0]"></div>
             <mat-card-content>

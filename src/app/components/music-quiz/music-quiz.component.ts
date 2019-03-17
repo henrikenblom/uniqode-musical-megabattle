@@ -1,7 +1,14 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {AngularFirestore} from "@angular/fire/firestore";
-import {ApplicationState, PlayerStats, QuizState, ResponseOption, Track} from "../../../../functions/src/declarations";
+import {
+  ApplicationState,
+  CustomQuestion,
+  PlayerStats,
+  QuizState,
+  ResponseOption,
+  Track
+} from "../../../../functions/src/declarations";
 import {animate, style, transition, trigger} from "@angular/animations";
 
 @Component({
@@ -52,6 +59,8 @@ export class MusicQuizComponent implements OnInit {
   guessable = true;
   randomImageIndex = 1;
   previousScore = 0;
+  customQuestion: CustomQuestion;
+  customQuestionCorrectAnswer: string;
 
   constructor(
     private db: AngularFirestore,
@@ -63,8 +72,8 @@ export class MusicQuizComponent implements OnInit {
     this.authService.afAuth.authState.subscribe(user => {
       if (user) {
         this.initializeState();
-        this.fetchGeneralState();
-        this.fetchCurrentTrack();
+        this.startFetchingGeneralState();
+        this.startFetchingCurrentTrack();
       }
     });
   }
@@ -201,7 +210,7 @@ export class MusicQuizComponent implements OnInit {
       });
   }
 
-  private fetchGeneralState() {
+  private startFetchingGeneralState() {
     this.db.collection('general')
       .doc<ApplicationState>('state')
       .valueChanges()
@@ -210,7 +219,7 @@ export class MusicQuizComponent implements OnInit {
       });
   }
 
-  private fetchCurrentTrack() {
+  private startFetchingCurrentTrack() {
     this.db.collection('musicquiz')
       .doc<Track>('current_track')
       .valueChanges()
@@ -224,12 +233,48 @@ export class MusicQuizComponent implements OnInit {
         if (update) {
           this.guessable = true;
           this.quizState.haveGuessed = false;
-          this.fetchCurrentArtistInformation();
+          this.startFetchingCurrentArtistInformation();
         }
       });
   }
 
-  private fetchCurrentArtistInformation() {
+  private getCustomQuestion(track: Track): Promise<CustomQuestion> {
+    return this.db.collection('musicquiz')
+      .doc('custom')
+      .collection('questions')
+      .doc(track.track_id)
+      .get().toPromise().then(doc => {
+        if (doc.exists) {
+          return doc.data() as CustomQuestion;
+        } else {
+          return {
+            artistName: track.artist_name,
+            trackName: track.name,
+            trackId: track.track_id,
+            text: '',
+            responseOptions: [
+              {response: '', correct: true},
+              {response: '', correct: false},
+              {response: '', correct: false}
+            ]
+          } as CustomQuestion;
+        }
+      }).catch(() => {
+        return {
+          artistName: track.artist_name,
+          trackName: track.name,
+          trackId: track.track_id,
+          text: '',
+          responseOptions: [
+            {response: '', correct: true},
+            {response: '', correct: false},
+            {response: '', correct: false}
+          ]
+        } as CustomQuestion;
+      });
+  }
+
+  private startFetchingCurrentArtistInformation() {
     this.db.collection('musicquiz')
       .doc('artists')
       .collection('played')
@@ -239,11 +284,23 @@ export class MusicQuizComponent implements OnInit {
         if (artistInformation) {
           this.responseOptions = [];
           this.currentArtistInformation = artistInformation;
-          this.responseOptions[0] = {response: artistInformation.name, correct: true};
-          this.responseOptions[1] = {response: artistInformation.related_artists[0], correct: false};
-          this.responseOptions[2] = {response: artistInformation.related_artists[1], correct: false};
-          MusicQuizComponent.shuffleResponses(this.responseOptions);
-          this.guessable = true;
+          this.getCustomQuestion(this.currentTrack).then(question => {
+            if (question.text.length > 0) {
+              this.customQuestion = question;
+            } else {
+              delete this.customQuestion;
+            }
+            if (this.customQuestion) {
+              this.responseOptions = this.customQuestion.responseOptions;
+              this.customQuestionCorrectAnswer = this.customQuestion.responseOptions[0].response;
+            } else {
+              this.responseOptions[0] = {response: artistInformation.name, correct: true};
+              this.responseOptions[1] = {response: artistInformation.related_artists[0], correct: false};
+              this.responseOptions[2] = {response: artistInformation.related_artists[1], correct: false};
+            }
+            MusicQuizComponent.shuffleResponses(this.responseOptions);
+            this.guessable = true;
+          });
         } else {
           this.responseOptions = [];
           this.guessable = false;
