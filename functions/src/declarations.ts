@@ -10,6 +10,12 @@ export interface Track {
   track_id: string;
 }
 
+export interface MinimalTrack {
+  name: string;
+  artist_name: string;
+  track_id: string;
+}
+
 export interface CustomQuestion {
   trackName: string;
   artistName: string;

@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import {QuizState, MusicQuizGuess, PlayerStats, Track} from "./declarations";
+import {QuizState, MusicQuizGuess, PlayerStats, Track, MinimalTrack} from "./declarations";
 
 try {
   admin.initializeApp();
@@ -45,8 +45,8 @@ exports.resetMusicQuiz = functions.https.onRequest((req: any, res: any) => {
       });
 
     }).then(() => {
-      console.log('Guesses snapshot could be fetched');
-    })
+    console.log('Guesses snapshot could be fetched');
+  })
     .catch(() => {
       console.log('Guesses snapshot could not be fetched');
     });
@@ -66,8 +66,43 @@ exports.musicQuizResetGuesses = functions.firestore
 
     if (newTrack.name !== previousTrack.name
       || newTrack.artist_id !== previousTrack.artist_id) {
-      const reference = db.collection('musicquiz').doc('guesses').collection('users');
-      const query = reference.orderBy('__name__');
+
+      db.collection('musicquiz').doc('start_track').get().then(snapshot => {
+        if (snapshot.exists) {
+          const startTrack = snapshot.data() as MinimalTrack;
+          if (startTrack.track_id === newTrack.track_id) {
+            db.collection('general').doc('state').set({musicQuizRunning: true})
+              .then(() => {
+                console.log('Quiz start was triggered by track');
+              })
+              .catch(() => {
+                console.error('An error occurred trying to auto start quiz');
+              });
+          }
+        }
+      }).catch(() => {
+        console.error('An error occurred trying to fetch start track');
+      });
+
+      db.collection('musicquiz').doc('stop_track').get().then(snapshot => {
+        if (snapshot.exists) {
+          const stopTrack = snapshot.data() as MinimalTrack;
+          if (stopTrack.track_id === newTrack.track_id) {
+            db.collection('general').doc('state').set({musicQuizRunning: false})
+              .then(() => {
+                console.log('Quiz stop was triggered by track');
+              })
+              .catch(() => {
+                console.error('An error occurred trying to auto stop quiz');
+              });
+          }
+        }
+      }).catch(() => {
+        console.error('An error occurred trying to fetch stop track');
+      });
+
+      const usersReference = db.collection('musicquiz').doc('guesses').collection('users');
+      const query = usersReference.orderBy('__name__');
 
       return query.get()
         .then((snapshot) => {
