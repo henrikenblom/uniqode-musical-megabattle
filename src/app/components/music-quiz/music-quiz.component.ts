@@ -54,7 +54,14 @@ export class MusicQuizComponent implements OnInit {
   responseOptions: ResponseOption[];
   generalStateQuizRunning = false;
   quizRunning = false;
-  quizState: QuizState = {guessWasCorrect: false, haveGuessed: false, reward: 0, artistGenres: [], haveLiked: false};
+  quizState: QuizState = {
+    guessWasCorrect: false,
+    haveGuessed: false,
+    reward: 0,
+    artistGenres: [],
+    haveLiked: false,
+    feedback: 0
+  };
   stateSynced = false;
   guessable = true;
   randomImageIndex = 1;
@@ -85,6 +92,11 @@ export class MusicQuizComponent implements OnInit {
   likeTrack(positive: boolean) {
     if (!this.quizState.haveLiked) {
       this.quizState.haveLiked = true;
+      if (positive) {
+        this.quizState.feedback = 1;
+      } else {
+        this.quizState.feedback = -1;
+      }
       const statsReference = this.db.collection('musicquiz')
         .doc('scoreboard')
         .collection('stats')
@@ -117,7 +129,8 @@ export class MusicQuizComponent implements OnInit {
       haveGuessed: true,
       reward: this.adjustReward(this.currentTrack.reward),
       artistGenres: this.currentArtistInformation.genres,
-      haveLiked: false
+      haveLiked: false,
+      feedback: 0
     };
     this.responseOptions = [];
     this.persistState();

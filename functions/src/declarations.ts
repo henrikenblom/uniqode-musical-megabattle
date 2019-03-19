@@ -60,8 +60,9 @@ export interface QuizState {
   haveGuessed: boolean;
   guessWasCorrect: boolean;
   reward: number;
-  artistGenres: String[];
+  artistGenres: string[];
   haveLiked: boolean;
+  feedback: number;
 }
 
 export interface ResponseOption {
