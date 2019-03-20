@@ -79,3 +79,11 @@ export interface AutoSwitch {
   active: boolean;
   threshold: number;
 }
+
+export interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL: string;
+  admin?: boolean;
+}
