@@ -73,3 +73,9 @@ export interface ResponseOption {
 export interface ApplicationState {
   musicQuizRunning: boolean;
 }
+
+
+export interface AutoSwitch {
+  active: boolean;
+  threshold: number;
+}

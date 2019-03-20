@@ -46,7 +46,7 @@ export class AuthService {
   authLogin(provider) {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((result) => {
-          if (result.user.email.includes('q')) {
+          if (result.user.email.includes('@')) {
             this.ngZone.run(() => {
               this.router.navigate(['music-quiz']);
             });

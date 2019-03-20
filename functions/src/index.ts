@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import {QuizState, MusicQuizGuess, PlayerStats, Track, MinimalTrack} from "./declarations";
+import {QuizState, MusicQuizGuess, PlayerStats, Track, MinimalTrack, AutoSwitch} from "./declarations";
 
 try {
   admin.initializeApp();
@@ -176,6 +176,59 @@ exports.musizQuizHandleGuess = functions.firestore
               console.error(e);
             });
           }
+        })
+        .then(() => {
+          db.collection('musicquiz').doc('auto_switch').get().then(asSnapshot => {
+            if (asSnapshot.exists) {
+              const autoSwitch = asSnapshot.data() as AutoSwitch;
+              if (autoSwitch.active) {
+                db.collection('users').get().then(usersSnapshot => {
+                  const userCount = usersSnapshot.size - 1; // Deduct admin account
+                  if (userCount > 0) {
+                    db.collection('musicquiz')
+                      .doc('current_track')
+                      .get().then(currentTrackSnapshot => {
+                      if (currentTrackSnapshot.exists) {
+                        const currentTrack = currentTrackSnapshot.data() as Track;
+                        if (currentTrack.is_playing
+                          && currentTrack.reward <= 7) {
+                          db.collection('musicquiz')
+                            .doc('guesses')
+                            .collection('users').get().then(statesSnapshot => {
+                            let guessCount = 0;
+                            statesSnapshot.forEach(stateSnapshot => {
+                              const state = stateSnapshot.data() as QuizState;
+                              if (state.haveGuessed) {
+                                guessCount++;
+                              }
+                            });
+                            const guessPercentage = (guessCount / userCount) * 100;
+                            if (guessPercentage >= autoSwitch.threshold) {
+                              db.collection('musicquiz')
+                                .doc('auto_switch_trigger')
+                                .set({switch: true}).then(() => {
+                                  console.log('Auto switch trigger set');
+                              }).catch(err => {
+                                console.log(err);
+                              });
+                            }
+                          }).catch(err => {
+                            console.log(err);
+                          });
+                        }
+                      }
+                    }).catch(err => {
+                      console.log(err);
+                    });
+                  }
+                }).catch(err => {
+                  console.log(err);
+                });
+              }
+            }
+          }).catch(err => {
+            console.log(err);
+          });
         })
         .catch(err => {
           console.log(err);
