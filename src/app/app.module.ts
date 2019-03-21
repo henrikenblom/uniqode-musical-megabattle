@@ -25,6 +25,7 @@ import {BackgroundImageDirective} from './background-image.directive';
 import {CountoModule} from "angular2-counto";
 import {RoundPipe} from './round.pipe';
 import {UseUniqodeAccountWarningComponent} from './use-uniqode-account-warning/use-uniqode-account-warning.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import {UseUniqodeAccountWarningComponent} from './use-uniqode-account-warning/u
     MatCardModule,
     MatRippleModule,
     MatSnackBarModule,
-    CountoModule
+    CountoModule,
+    ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   entryComponents: [UseUniqodeAccountWarningComponent],
   providers: [AuthService,
