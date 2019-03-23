@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import {QuizState, MusicQuizGuess, PlayerStats, Track, MinimalTrack, AutoSwitch} from "./declarations";
+import {AutoSwitch, MinimalTrack, MusicQuizGuess, PlayerStats, QuizState, Track} from "./declarations";
 
 try {
   admin.initializeApp();
@@ -63,6 +63,8 @@ exports.musicQuizResetGuesses = functions.firestore
 
     const newTrack = change.after.data();
     const previousTrack = change.before.data();
+    const opinionRef = db.collection('musicquiz').doc('current_opinion');
+    const autoSwitchRef = db.collection('musicquiz').doc('auto_switch');
 
     if (newTrack.name !== previousTrack.name
       || newTrack.artist_id !== previousTrack.artist_id) {
@@ -74,6 +76,7 @@ exports.musicQuizResetGuesses = functions.firestore
             db.collection('general').doc('state').set({musicQuizRunning: true})
               .then(() => {
                 console.log('Quiz start was triggered by track');
+                setStatusMessage('Quiz was started by trigger track');
               })
               .catch(() => {
                 console.error('An error occurred trying to auto start quiz');
@@ -91,6 +94,7 @@ exports.musicQuizResetGuesses = functions.firestore
             db.collection('general').doc('state').set({musicQuizRunning: false})
               .then(() => {
                 console.log('Quiz stop was triggered by track');
+                setStatusMessage('Quiz was stopped by trigger track');
               })
               .catch(() => {
                 console.error('An error occurred trying to auto stop quiz');
@@ -104,6 +108,23 @@ exports.musicQuizResetGuesses = functions.firestore
       const usersReference = db.collection('musicquiz').doc('guesses').collection('users');
       const query = usersReference.orderBy('__name__');
 
+      opinionRef.set({
+        negative_count: 0,
+        positive_count: 0
+      }).then(() => {
+        console.log('Reset opinion')
+      }).catch(err => {
+        console.error('An error occurred trying to reset opinion: ', err);
+      });
+
+      autoSwitchRef.update({
+        suppress_next_switch: false
+      }).then(() => {
+        console.log('Set autoswitch suppression to false');
+      }).catch(err => {
+        console.error('An error occurred trying to reset opinion: ', err);
+      });
+
       return query.get()
         .then((snapshot) => {
 
@@ -115,7 +136,7 @@ exports.musicQuizResetGuesses = functions.firestore
           batch.commit().catch(e => {
             console.error(e);
           })
-
+          setStatusMessage('');
         });
 
     } else {
@@ -138,6 +159,7 @@ exports.musicQuizAutoSwitch = functions.firestore
         if (asSnapshot.exists) {
           const autoSwitch = asSnapshot.data() as AutoSwitch;
           if (autoSwitch.active
+            && !autoSwitch.suppress_next_switch
             && reward <= (10 - autoSwitch.progress_threshold)) {
             db.collection('users').get().then(usersSnapshot => {
               const userCount = usersSnapshot.size - 1; // Deduct admin account
@@ -157,7 +179,8 @@ exports.musicQuizAutoSwitch = functions.firestore
                     db.collection('musicquiz')
                       .doc('auto_switch_trigger')
                       .set({switch: true}).then(() => {
-                      console.log('Auto switch trigger set');
+                      console.log('Auto switch trigger set due to response threshold exceeded');
+                      setStatusMessage('Auto skip was triggered by response/progress thresholds');
                     }).catch(err => {
                       console.log(err);
                     });
@@ -197,7 +220,67 @@ exports.musizQuizHandleGuess = functions.firestore
     const userId = context.params.userId;
     const historyRef = db.collection('musicquiz').doc('history').collection(userId);
     const statsRef = db.collection('musicquiz').doc('scoreboard').collection('stats').doc(userId);
+    const opinionRef = db.collection('musicquiz').doc('current_opinion');
+    const autoSwitchRef = db.collection('musicquiz').doc('auto_switch');
     let reward = 0;
+
+    if (change.before.data().feedback !== change.after.data().feedback) {
+      db.collection('users').get().then(usersSnapshot => {
+        const userCount = usersSnapshot.size - 1; // Deduct admin account
+        if (userCount > 0) {
+          const feedback = change.after.data().feedback;
+          opinionRef.get().then(opinionSnapshot => {
+            autoSwitchRef.get().then(autoSwitchSnapshot => {
+              const autoSwitch = autoSwitchSnapshot.data() as AutoSwitch;
+              if (autoSwitch.opinion_threshold > 0) {
+                const opinion = opinionSnapshot.data() as {
+                  negative_count: number,
+                  positive_count: number
+                };
+                if (feedback < 0) {
+                  opinion.negative_count++;
+                  const negativeQuota = (opinion.negative_count / userCount) * 100;
+                  if (negativeQuota >= autoSwitch.opinion_threshold) {
+                    db.collection('musicquiz')
+                      .doc('auto_switch_trigger')
+                      .set({switch: true}).then(() => {
+                      console.log('Auto switch trigger set due to negative feedback');
+                      setStatusMessage('Auto skip was triggered due to negative feedback');
+                    }).catch(err => {
+                      console.log(err);
+                    });
+                  }
+                }
+                if (feedback > 0) {
+                  opinion.positive_count++;
+                  const positiveQuota = (opinion.positive_count / userCount) * 100;
+                  if (positiveQuota >= autoSwitch.opinion_threshold) {
+                    autoSwitch.suppress_next_switch = true;
+                    autoSwitchRef.set(autoSwitch).then(() => {
+                      console.log('Suppressed next auto switch due to positive feedback');
+                      setStatusMessage('Suppressed next auto skip due to positive feedback');
+                    }).catch(err => {
+                      console.log(err);
+                    });
+                  }
+                }
+                opinionRef.set(opinion).then(() => {
+                  console.log('Updated opinion data');
+                }).catch(err => {
+                  console.log(err);
+                });
+              }
+            }).catch(err => {
+              console.log(err);
+            });
+          }).catch(err => {
+            console.log(err);
+          });
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+    }
 
     if (!change.before.data().haveGuessed && guessState.guessWasCorrect) {
 
@@ -283,4 +366,12 @@ function musicQuizIncreaseStats(playerStats: PlayerStats, reward: number, genres
     if (genreString.includes('soul')) playerStats.soul_points++;
   }
   return playerStats;
+}
+
+function setStatusMessage(message: string) {
+  db.collection('general').doc('status_message').set({text: message}).then(() => {
+    console.log('Set status message to', message);
+  }).catch(err => {
+    console.error(err);
+  });
 }

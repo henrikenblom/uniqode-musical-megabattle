@@ -77,8 +77,10 @@ export interface ApplicationState {
 
 export interface AutoSwitch {
   active: boolean;
+  suppress_next_switch: boolean;
   response_threshold: number;
   progress_threshold: number;
+  opinion_threshold: number;
 }
 
 export interface User {
