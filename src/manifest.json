@@ -1,7 +1,7 @@
 {
-  "name": "uniqode-musical-megabattle",
-  "short_name": "uniqode-musical-megabattle",
-  "theme_color": "#1976d2",
+  "name": "UniQode Musical Megabattle",
+  "short_name": "Musical Megabattle",
+  "theme_color": "#d309d3",
   "background_color": "#fafafa",
   "display": "standalone",
   "scope": "/",
