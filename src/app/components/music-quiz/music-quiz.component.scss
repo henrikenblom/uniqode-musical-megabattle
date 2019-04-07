@@ -16,12 +16,12 @@
 
 .incorrect {
   background-color: rgba(214, 31, 6, 0.5);
-  color: rgb(54, 10, 3);
+  color: rgb(24, 8, 0);
 }
 
 .music-quiz-question-card, .correct, .music-quiz-paused {
-  background-color: rgba(211, 9, 211, 0.85);
-  color: rgb(255, 210, 255);
+  background-color: rgba(0, 128, 90, 0.9);
+  color: rgb(0, 220, 180);
 }
 
 .music-quiz-question-card {
@@ -31,8 +31,8 @@
 }
 
 .quiz-answer-card {
-  background-color: rgba(9, 28, 170, 0.9);
-  color: rgb(194, 213, 255);
+  background-color: rgb(0, 148, 120);
+  color: rgb(0, 255, 230);
   height: 18px;
 }
 
@@ -73,7 +73,7 @@
 }
 
 .total-score {
-  color: rgb(255, 210, 255);
+  color: rgb(0, 220, 180);
   margin-left: 24px;
   padding-top: 4px;
 }

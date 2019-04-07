@@ -22,21 +22,25 @@ export class AuthService {
     public ngZone: NgZone,
     private snackBar: MatSnackBar
   ) {
-    this.afAuth.authState.subscribe(user => {
-      if (user) {
-        this.userData = user;
-        localStorage.setItem('user', JSON.stringify(this.userData));
-        JSON.parse(localStorage.getItem('user'));
-      } else {
-        localStorage.setItem('user', null);
-        JSON.parse(localStorage.getItem('user'));
-      }
-    })
+    let storedUserData = JSON.parse(localStorage.getItem('user')) as User;
+    if (storedUserData) {
+      this.userData = storedUserData;
+    }
   }
 
   static get isLoggedIn(): boolean {
     const user = JSON.parse(localStorage.getItem('user'));
     return (user !== null);
+  }
+
+  cocAuth(uid: string) {
+    this.afs.collection('users').doc<User>(uid).get().forEach(snapshot => {
+      this.userData = snapshot.data() as User;
+      localStorage.setItem('user', JSON.stringify(this.userData));
+      this.ngZone.run(() => {
+        this.router.navigate(['music-quiz']);
+      });
+    });
   }
 
   googleAuth() {
@@ -46,7 +50,7 @@ export class AuthService {
   authLogin(provider) {
     return this.afAuth.auth.signInWithPopup(provider)
       .then((result) => {
-          if (result.user.email.includes('@')) {
+          if (result.user.email.includes('q')) {
             this.ngZone.run(() => {
               this.router.navigate(['music-quiz']);
             });

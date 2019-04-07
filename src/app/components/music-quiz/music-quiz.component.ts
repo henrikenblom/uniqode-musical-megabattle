@@ -2,12 +2,13 @@ import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {AngularFirestore} from "@angular/fire/firestore";
 import {
-  ApplicationState,
+  ApplicationState, ArtistInformation,
   CustomQuestion,
   PlayerStats,
   QuizState,
   ResponseOption,
-  Track
+  Track,
+
 } from "../../../../functions/src/declarations";
 import {animate, style, transition, trigger} from "@angular/animations";
 
@@ -48,6 +49,7 @@ export class MusicQuizComponent implements OnInit {
 
   REWARD_ADJUSTMENT_SCALE = 0.2303;
   MAX_RANDOM_IMAGE_INDEX = 16;
+  showFeedback = false;
   currentTrack: Track;
   currentArtistInformation: ArtistInformation;
   playerStats: PlayerStats;
@@ -76,13 +78,11 @@ export class MusicQuizComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.authService.afAuth.authState.subscribe(user => {
-      if (user) {
-        this.initializeState();
-        this.startFetchingGeneralState();
-        this.startFetchingCurrentTrack();
-      }
-    });
+    if (this.authService.userData) {
+      this.initializeState();
+      this.startFetchingGeneralState();
+      this.startFetchingCurrentTrack();
+    }
   }
 
   onCountoEnd() {
@@ -129,8 +129,8 @@ export class MusicQuizComponent implements OnInit {
       haveGuessed: true,
       reward: this.adjustReward(this.currentTrack.reward),
       artistGenres: this.currentArtistInformation.genres,
-      haveLiked: false,
-      feedback: 0
+      haveLiked: true,
+      feedback: -1
     };
     this.responseOptions = [];
     this.persistState();

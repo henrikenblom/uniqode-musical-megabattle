@@ -90,3 +90,17 @@ export interface User {
   photoURL: string;
   admin?: boolean;
 }
+
+export interface ArtistInformation {
+  name: string;
+  images: ArtistImage[];
+  related_artists: string[];
+  genres: string[];
+}
+
+export interface ArtistImage {
+  width: number;
+  height: number;
+  url: string;
+}
+

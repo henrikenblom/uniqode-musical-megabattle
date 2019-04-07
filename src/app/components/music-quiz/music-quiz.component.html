@@ -8,7 +8,7 @@
       <button mat-menu-item (click)="authService.signOut()">Sign out</button>
     </mat-menu>
     <div *ngIf="playerStats" class="total-score">
-      Din poäng: <span counto
+      Poäng: <span counto
                        [step]="10"
                        [countTo]="playerStats.points"
                        [countFrom]="previousScore"
@@ -104,7 +104,7 @@
             *ngIf="quizState.guessWasCorrect; then guessWasCorrectBlock else guessWasIncorrectBlock"></ng-container>
 
           <ng-template #guessWasCorrectBlock>
-            <h1>Snyggt jobbat unicorn!</h1>
+            <h1>Snyggt jobbat!</h1>
             <p *ngIf="customQuestion">"{{customQuestionCorrectAnswer}}" är rätt!</p>
             <div class="decoration-image" mat-card-image appBackgroundImage
                  [artistImage]="currentArtistInformation.images[0]"></div>
@@ -127,7 +127,7 @@
           </ng-template>
 
         </mat-card>
-        <mat-card class="track-feedback" *ngIf="!quizState.haveLiked && generalStateQuizRunning" @delayed-fold>
+        <mat-card class="track-feedback" *ngIf="showFeedback && !quizState.haveLiked && generalStateQuizRunning" @delayed-fold>
           <mat-card-content>
             <h3 class="track-feedback-label">Vad tycker du om låten?</h3>
             <mat-card-actions>

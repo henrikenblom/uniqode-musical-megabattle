@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {AngularFirestore} from "@angular/fire/firestore";
+import {User} from "../../../../functions/src/declarations";
 
 @Component({
   selector: 'app-sign-in',
@@ -24,14 +26,25 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 export class SignInComponent implements OnInit {
 
   preLogin = false;
+  userList: User[];
 
-  constructor(public authService: AuthService) {
+  constructor(public authService: AuthService,
+              private db: AngularFirestore) {
   }
 
   ngOnInit() {
+    this.startFetchingUsers();
     setTimeout(() => {
       this.preLogin = false;
     }, 5000);
+  }
+
+  startFetchingUsers() {
+    this.db.collection<User>('users')
+      .valueChanges()
+      .forEach(u => {
+        this.userList = u;
+      });
   }
 
 }

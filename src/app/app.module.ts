@@ -18,7 +18,7 @@ import {
   MatCardModule,
   MatIconModule,
   MatMenuModule,
-  MatRippleModule, MatSnackBarModule,
+  MatRippleModule, MatSelectModule, MatSnackBarModule,
   MatToolbarModule
 } from "@angular/material";
 import {BackgroundImageDirective} from './background-image.directive';
@@ -51,6 +51,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
     MatCardModule,
     MatRippleModule,
     MatSnackBarModule,
+    MatSelectModule,
     CountoModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],

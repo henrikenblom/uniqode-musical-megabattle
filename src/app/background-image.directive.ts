@@ -1,4 +1,5 @@
 import {AfterViewInit, Directive, ElementRef, Input, OnDestroy} from '@angular/core';
+import {ArtistImage} from "../../functions/src/declarations";
 
 @Directive({
   selector: '[appBackgroundImage]'
